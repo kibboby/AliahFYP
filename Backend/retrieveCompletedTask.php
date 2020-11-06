@@ -6,7 +6,7 @@ if (isset($_GET["sales_username"])) {
 
 include "config.php";
 
-$sql = "select * from task where salesperson_username='$sales_username' AND task_status=Completed";
+$sql = "select * from task where salesperson_username='$sales_username' AND task_status='Completed'";
 $result = mysqli_query($conn, $sql);
 if (!$result) {
     trigger_error('Invalid query: ' . $conn->error);

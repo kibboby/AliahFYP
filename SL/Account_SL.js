@@ -29,7 +29,7 @@ export default class SalesPersonAccount extends Component {
     }
 
     _AccountDetails() {
-        return fetch('http://localhost/Backend/retrieveAccountInfo.php')
+        return fetch('http://192.168.43.175:80/Backend/retrieveAccountInfo.php')
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({
@@ -42,7 +42,7 @@ export default class SalesPersonAccount extends Component {
     }
 
     _TaskList() {
-        return fetch('http://localhost/Backend/retrieveOverallTaskList.php')
+        return fetch('http://192.168.43.175:80/Backend/retrieveOverallTaskList.php')
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({

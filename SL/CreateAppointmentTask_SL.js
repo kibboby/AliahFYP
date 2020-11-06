@@ -13,10 +13,19 @@ export default class appointmentTask extends React.Component {
       date: "",
       time: "",
       notes: "",
+      leads_name: '',
       sales_username: '',
       location: '',
     }
   }
+
+  componentDidMount() {
+    this.setState({
+      leads_name: this.props.route.params.leads_name,
+      sales_username: this.props.route.params.sales_username
+    });
+  }
+
 
   onCancel() {
     this.TimePicker.close();
@@ -28,7 +37,7 @@ export default class appointmentTask extends React.Component {
   }
 
   _Insert_Data_Into_MySQL() {
-    const url = 'http://localhost:80/Backend/CreateAppointmentTask.php';
+    const url = 'http://192.168.43.175:80/Backend/CreateAppointmentTask.php';
     fetch(url,
       {
         method: 'POST',
@@ -40,6 +49,7 @@ export default class appointmentTask extends React.Component {
         },
         body: JSON.stringify(
           {
+            leads_name: this.props.route.params.leads_name,
             salesperson_username: this.state.sales_username,
             task_time: this.state.time,
             task_date: this.state.date,
@@ -53,6 +63,7 @@ export default class appointmentTask extends React.Component {
       }).catch((error) => {
         console.log(error);
       });
+      this.props.navigation.navigate('Lead Detail')
   }
 
   render() {
@@ -126,7 +137,7 @@ export default class appointmentTask extends React.Component {
             <StatusBar style="auto" />
           </View>
           <View>
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('Lead Detail Final')}>
+            <TouchableOpacity onPress={() => this._Insert_Data_Into_MySQL()}>
               <Text style={buttonStyles.text}>
                 Done
             </Text>

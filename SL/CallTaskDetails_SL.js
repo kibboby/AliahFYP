@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity, Linking, Platform } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Linking, Platform,Alert } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon2 from 'react-native-vector-icons/Feather';
 
@@ -42,7 +42,7 @@ export default class SalesPersonAccount extends Component {
     }
 
     _TaskDetails() {
-        return fetch(`http://localhost/Backend/retrieveLeadsTaskList.php?task_id=${encodeURIComponent(this.state.task_id)}`)
+        return fetch(`http://192.168.43.175:80/Backend/retrieveTaskDetails.php?task_id=${encodeURIComponent(this.props.route.params.task_Id)}`)
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({
@@ -55,7 +55,7 @@ export default class SalesPersonAccount extends Component {
     };
 
     _deleteTask(task_id) {
-        const url = 'http://localhost/Backend/deleteTask.php';
+        const url = 'http://192.168.43.175:80/Backend/deleteTask.php';
         fetch(url,
             {
                 method: 'POST',
@@ -122,12 +122,12 @@ export default class SalesPersonAccount extends Component {
 
 
                                         <View style={styles.Direction2}>
-                                            <TouchableOpacity style={styles.buttons} onPress={() => this.createDeleteAlert(task_id)}>
+                                            <TouchableOpacity style={styles.buttons} onPress={() => this._deleteTask(this.props.route.params.task_Id)}>
                                                 <Icon2 name="trash" size={20} color='#ffffff' />
                                                 <Text style={{ color: '#ffffff' }}>Delete Task</Text>
                                             </TouchableOpacity>
-                                            <TouchableOpacity style={styles.buttons} onPress={() => this.navigation.navigate('Edit Call Task', {
-                                                task_id: this.state.task_id
+                                            <TouchableOpacity style={styles.buttons} onPress={() => this.props.navigation.navigate('Edit Call Task', {
+                                                task_id: item.task_id
                                             })}>
                                                 <Icon2 name="edit" size={20} color='#ffffff' />
                                                 <Text style={{ color: '#ffffff' }}>Edit Task</Text>
