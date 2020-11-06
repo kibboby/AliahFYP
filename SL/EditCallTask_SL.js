@@ -3,6 +3,7 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, Text, View, TextInput, Switch, ScrollView, StackScreen } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import TimePicker from "react-native-24h-timepicker";
+import { FlatList } from 'react-native-gesture-handler';
 
 
 export default class callTask extends React.Component {
@@ -12,14 +13,12 @@ export default class callTask extends React.Component {
       date: "",
       time: "",
       notes: "",
-      task_id: '',
+      task_id: this.props.route.params.task_id,
     }
   }
 
-  componentDidMount(){
-    this.setState({
-        task_id: this.props.route.param.task_id
-    });
+  componentDidMount() {
+    this._TaskDetails();
   }
 
   onCancel() {
@@ -31,8 +30,21 @@ export default class callTask extends React.Component {
     this.TimePicker.close();
   }
 
+  _TaskDetails() {
+    return fetch(`http://192.168.43.175:80/Backend/retrieveTaskDetails.php?task_id=${encodeURIComponent(this.state.task_id)}`)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          dataSource: responseJson
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   _Insert_Data_Into_MySQL() {
-    const url = 'http://localhost/Backend/editCallTaskDetails.php';
+    const url = 'http://192.168.43.175:80/Backend/editCallTaskDetails.php';
     fetch(url,
       {
         method: 'POST',
@@ -56,66 +68,71 @@ export default class callTask extends React.Component {
       }).catch((error) => {
         console.log(error);
       });
-      
   }
 
   render() {
     return (
-      <View style={styles.allview}>
-        <ScrollView>
-          <View>
-            <Text style={styles.Title}>Date: </Text>
-            <TextInput
-              style={{ height: 40, margin: 8, borderColor: 'black', borderWidth: 1 }}
-              placeholder="DD/MM/YYYY"
-              value={this.state.date}
-              onChangeText={text => this.setState({ date: text })} />
-          </View>
-          <View style={Timestyles.container}>
-            <Text style={Timestyles.text}>Time: {this.state.time}</Text>
-            <TouchableOpacity
-              onPress={() => this.TimePicker.open()}
-              style={Timestyles.button}
-            >
-              <Text style={Timestyles.buttonText}>TIME </Text>
-            </TouchableOpacity>
-            <TimePicker
-              ref={ref => {
-                this.TimePicker = ref;
-              }}
-              onCancel={() => this.onCancel()}
-              onConfirm={(hour, minute) => this.onConfirm(hour, minute)}
-              value={this.state.time}
-            />
-          </View>
-          
-          <View >
-            <Text style={styles.allDay}>Notes </Text>
-            <TextInput
-              style={styles.commentSection}
-              placeholderTextColor="black"
-              placeholder='Comment Here'
-              multiline={true}
-              numberOfLines={4}
-              width="100%"
-              value={this.state.notes}
-              onChangeText={text => this.setState({ notes: text })} />
-            <StatusBar style="auto" />
-          </View>
-          <View>
-            <TouchableOpacity onPress={() => this._Insert_Data_Into_MySQL()} >
-              <Text style={buttonStyles.text}>
-                Done
+      <ScrollView>
+        <FlatList
+          data={this.state.dataSource}
+          renderItem={({ item }) => {
+            return (
+              <View style={styles.allview}>
+                <View>
+                  <Text style={styles.Title}>Date: </Text>
+                  <TextInput
+                    style={{ height: 40, margin: 8, borderColor: 'black', borderWidth: 1 }}
+                    placeholder="DD/MM/YYYY"
+                    value={item.task_date}
+                    onChangeText={text => this.setState({ date: text })} />
+                </View>
+                <View style={Timestyles.container}>
+                  <Text style={Timestyles.text}>Time: </Text>
+                  <TouchableOpacity
+                    onPress={() => this.TimePicker.open()}
+                    style={Timestyles.button}
+                  >
+                    <Text style={Timestyles.buttonText}>TIME </Text>
+                  </TouchableOpacity>
+                  <TimePicker
+                    ref={ref => {
+                      this.TimePicker = ref;
+                    }}
+                    onCancel={() => this.onCancel()}
+                    onConfirm={(hour, minute) => this.onConfirm(hour, minute)}
+                    value={this.state.time}
+                  />
+                </View>
+                <View >
+                  <Text style={styles.allDay}>Notes </Text>
+                  <TextInput
+                    style={styles.commentSection}
+                    placeholderTextColor="black"
+                    placeholder='Comment Here'
+                    multiline={true}
+                    numberOfLines={4}
+                    width="100%"
+                    value={item.task_comments}
+                    onChangeText={text => this.setState({ notes: text })} />
+                  <StatusBar style="auto" />
+                </View>
+                <View>
+                  <TouchableOpacity onPress={() => this._Insert_Data_Into_MySQL()} >
+                    <Text style={buttonStyles.text}>
+                      Done
             </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.navigation.navigate('Call Task Detail')}>
-              <Text style={buttonStyles.text}>
-                Cancel
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => this.props.navigation.navigate('Call Task Detail')}>
+                    <Text style={buttonStyles.text}>
+                      Cancel
             </Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )
+          }
+          } />
+      </ScrollView>
     );
 
   }

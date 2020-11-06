@@ -25,7 +25,7 @@ export default class Touchables extends Component {
   }
 
   retrieveRemarks() {
-    const url = `http://localhost/Backend/retrieveRemarks.php?lead_id=${encodeURIComponent(this.props.route.params.leads_id)}`;
+    const url = `http://192.168.43.175:80/Backend/retrieveRemarks.php?lead_id=${encodeURIComponent(this.props.route.params.leads_id)}`;
     fetch(url, {
     }).then((response) => response.json())
       .then((responseJsonFromServer) => {

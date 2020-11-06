@@ -31,7 +31,7 @@ export default class App extends Component {
   }
 
   _uploadImage() {
-    RNFetchBlob.fetch('POST', 'http://localhost/Backend/uploadImage.php', {
+    RNFetchBlob.fetch('POST', 'http://192.168.43.175:80/Backend/uploadImage.php', {
       Authorization: "Bearer access-token",
       otherHeader: "foo",
       'Content-Type': 'multipart/form-data',
@@ -43,7 +43,7 @@ export default class App extends Component {
   }
 
   _Insert_Data_Into_MySQL() {
-    const url = 'http://localhost/Backend/saveDetails_SL.php';
+    const url = 'http://192.168.43.175:80/Backend/saveDetails_SL.php';
     fetch(url,
       {
         method: 'POST',

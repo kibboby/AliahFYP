@@ -23,7 +23,7 @@ export default class Touchables extends Component {
   }
 
   _Insert_Data_Into_MySQL() {
-    const url = 'http://localhost:80/Backend/remarks.php';
+    const url = 'http://192.168.43.175:80/Backend/remarks.php';
     fetch(url,
       {
         method: 'POST',

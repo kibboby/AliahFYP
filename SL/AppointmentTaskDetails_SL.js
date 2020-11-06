@@ -29,7 +29,7 @@ export default class SalesPersonAccount extends Component {
     }
 
     _TaskDetails() {
-        return fetch(`http://localhost/Backend/retrieveLeadsTaskList.php?task_id=${encodeURIComponent(this.state.task_id)}`)
+        return fetch(`http://192.168.43.175:80/Backend/retrieveTaskDetails.php?task_id=${encodeURIComponent(this.state.task_id)}`)
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({
@@ -42,7 +42,7 @@ export default class SalesPersonAccount extends Component {
     };
 
     _deleteTask(task_id) {
-        const url = 'http://localhost/Backend/deleteTask.php';
+        const url = 'http://192.168.43.175:80/Backend/deleteTask.php';
         fetch(url,
             {
                 method: 'POST',
@@ -115,7 +115,7 @@ export default class SalesPersonAccount extends Component {
                                                 <Icon2 name="trash" size={20} color='#ffffff' />
                                                 <Text style={{ color: '#ffffff' }}>Delete Task</Text>
                                             </TouchableOpacity>
-                                            <TouchableOpacity style={styles.buttons} onPress={() => this.navigation.navigate('Edit Appointment Task', {
+                                            <TouchableOpacity style={styles.buttons} onPress={() => this.props.navigation.navigate('Edit Appointment Task', {
                                                 task_id: this.state.task_id
                                             })}>
                                                 <Icon2 name="edit" size={20} color='#ffffff' />

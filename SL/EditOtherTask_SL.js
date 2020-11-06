@@ -32,7 +32,7 @@ export default class callTask extends React.Component {
   }
 
   _Insert_Data_Into_MySQL() {
-    const url = 'http://localhost/Backend/editOtherTaskDetails.php';
+    const url = 'http://192.168.43.175:80/Backend/editOtherTaskDetails.php';
     fetch(url,
       {
         method: 'POST',

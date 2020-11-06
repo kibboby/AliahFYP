@@ -23,14 +23,14 @@ export default class App extends Component {
       currentDay: moment().format('D'),
       CurrentMonth: moment().format("MM"),
       CurrentYear: moment().format("YYYY"),
-      diffDate: ''
+      diffDate: '',
     }
   }
 
   componentDidMount() {
     this.setState({
       leads_name: this.props.route.params.leads_name,
-      sales_username: this.props.route.params.sales_username
+      sales_username: this.props.route.params.sales_username,
     });
     this.LeadsDetailsItem();
     this._retrieveLeadsTaskList();
@@ -43,7 +43,7 @@ export default class App extends Component {
   }
 
   LeadsDetailsItem() {
-    return fetch('http://localhost:80/Backend/leadsDetails.php')
+    return fetch('http://192.168.43.175:80/Backend/leadsDetails.php')
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
@@ -60,7 +60,7 @@ export default class App extends Component {
       encodedName: this.props.route.params.leads_name,
       encodedSalesName: this.props.route.params.sales_username
     }
-    return fetch(`http://localhost/Backend/retrieveLeadsTaskList.php?lead_name=${encodeURIComponent(encodedValue.encodedName)}&sales_username=${encodeURIComponent(encodedValue.encodedSalesName)}`)
+    return fetch(`http://192.168.43.175:80/Backend/retrieveLeadsTaskList.php?lead_name=${encodeURIComponent(encodedValue.encodedName)}&sales_username=${encodeURIComponent(encodedValue.encodedSalesName)}`)
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
@@ -73,7 +73,7 @@ export default class App extends Component {
   }
 
   _updateTask(task_id) {
-    const url = 'http://localhost/Backend/updateTaskStatus.php';
+    const url = 'http://192.168.43.175:80/Backend/updateTaskStatus.php';
     fetch(url,
       {
         method: 'POST',
@@ -97,7 +97,7 @@ export default class App extends Component {
   }
 
   _deleteTask(task_id) {
-    const url = 'http://localhost/Backend/deleteTask.php';
+    const url = 'http://192.168.43.175:80/Backend/deleteTask.php';
     fetch(url,
       {
         method: 'POST',
@@ -121,7 +121,7 @@ export default class App extends Component {
   }
 
   _updateLeadStatus(leadsID, updatedStatus) {
-    const url = 'http://localhost/Backend/updateLeadStatus.php';
+    const url = 'http://192.168.43.175:80/Backend/updateLeadStatus.php';
     fetch(url,
       {
         method: 'POST',
@@ -238,8 +238,15 @@ export default class App extends Component {
     var day = taskDate.substr(0, 2);
     var Month = taskDate.substr(3, 2);
     var Year = taskDate.substr(6, 9);
+
+    this.state.day = day;
+    this.state.month = Month;
+    this.state.year = Year;
+
     var dateOne = moment([this.state.CurrentYear, this.state.CurrentMonth, this.state.currentDay]);
+    this.state.cDate = dateOne;
     var dateTwo = moment([Year, Month, day]);
+    this.state.cDate2 = dateTwo;
     var result = dateTwo.diff(dateOne, 'days');
     this.state.diffDate = result;
   }
@@ -271,14 +278,13 @@ export default class App extends Component {
                       <View style={styles.row}>
                         <TouchableOpacity
                           style={styles.WonButton}
-                          onPress={() => {this.createStatusWonAlert(item.lead_id)}}
+                          onPress={() => { this.createStatusWonAlert(item.lead_id) }}
                         >
                           <Text style={styles.buttoncontent}>WON</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                           style={styles.LoseButton}
-                        //onPress={this.createStatusLoseAlert}
-                        //disabled={!this.state.isFormValid}
+                        onPress={() => {this.createStatusLoseAlert(item.lead_id)}}
                         >
                           <Text style={styles.buttoncontent}>LOSE</Text>
                         </TouchableOpacity>
@@ -359,7 +365,7 @@ export default class App extends Component {
                         initValue="Create New Task"
                         onChange={(option) => {
                           if (option.label == "Call") {
-                            this.props.navigation.navigate('Call Task Detail',
+                            this.props.navigation.navigate('Create Call Task',
                               {
                                 leads_name: this.state.leads_name,
                                 sales_username: this.state.sales_username
@@ -447,7 +453,26 @@ export default class App extends Component {
                         </Card>
                       )
                     }
-                    if (this.state.diffDate < 0) {
+                    else if (this.state.diffDate < 0) {
+                      return (
+                        <Card style={styles.card}>
+                          <View style={styles.Task2}>
+                            <TouchableOpacity style={{ flex: 1 }} onPress={() => {
+                              this.redirectTaskDetailPage(item.task_title, item.task_id)
+                            }}>
+                              <View style={styles.TaskOverdue}>
+                                <Text style={styles.TypeOverdue}>{item.task_title}</Text>
+                                <Text style={styles.DateOverdue}> | </Text>
+                                <Text style={styles.DateOverdue}>{item.task_date}</Text>
+                              </View>
+                            </TouchableOpacity>
+                            <Text style={styles.icon}>Overdue!</Text>
+                            <Icon2 name="trash-2" size={20} color={'black'} style={styles.icon} onPress={() => this.createDeleteAlert(item.task_id)} />
+                            <Icon name="done" size={20} color={'green'} style={styles.icon} onPress={() => { this.createCompletionAlert() }} />
+                          </View>
+                        </Card>
+                      )
+                    } else {
                       return (
                         <Card style={styles.card}>
                           <View style={styles.Task2}>

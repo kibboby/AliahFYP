@@ -17,7 +17,7 @@ export default class callTask extends React.Component {
     }
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.setState({
       leads_name: this.props.route.params.leads_name,
       sales_username: this.props.route.params.sales_username
@@ -34,7 +34,7 @@ export default class callTask extends React.Component {
   }
 
   _Insert_Data_Into_MySQL() {
-    const url = 'http://localhost:80/Backend/CreateCallTask.php';
+    const url = 'http://192.168.43.175:80/Backend/CreateCallTask.php';
     fetch(url,
       {
         method: 'POST',
@@ -46,7 +46,7 @@ export default class callTask extends React.Component {
         },
         body: JSON.stringify(
           {
-            leads_name : this.state.leads_name,
+            leads_name: this.state.leads_name,
             salesperson_username: this.state.sales_username,
             task_time: this.state.time,
             task_date: this.state.date,
@@ -59,13 +59,13 @@ export default class callTask extends React.Component {
       }).catch((error) => {
         console.log(error);
       });
-      
+
   }
 
   render() {
     return (
-      <View style={styles.allview}>
-        <ScrollView>
+      <ScrollView>
+        <View style={styles.allview}>
           <View>
             <Text style={styles.Title}>Date: </Text>
             <TextInput
@@ -89,7 +89,7 @@ export default class callTask extends React.Component {
               onConfirm={(hour, minute) => this.onConfirm(hour, minute)}
             />
           </View>
-          
+
           <View >
             <Text style={styles.allDay}>Notes </Text>
             <TextInput
@@ -109,12 +109,11 @@ export default class callTask extends React.Component {
             </Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
-      </View>
+
+        </View>
+      </ScrollView>
     );
-
   }
-
 }
 
 
