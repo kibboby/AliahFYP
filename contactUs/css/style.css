@@ -1,0 +1,110 @@
+
+
+/* Forms in Contact us page */
+.helpform label{
+	margin-left: 25%;
+}
+
+.helpform input{
+	width: 50%;
+	margin: 8px 0 0 25%;
+	display: inline-block;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+}
+
+.helpform input[type=submit]{
+	width: 30%;
+	background-color: #4CAF50;
+	color: white;
+	padding: 14px 20px;
+	margin: 8px 35% 5% 35%;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.helpform input[type=submit]:hover{
+	background-color: #45a049;
+}
+
+.helpform textarea {
+	width: 50%;
+	height: 150px;
+	padding: 12px 20px;
+	margin: 8px 0 0 25%;
+	box-sizing: border-box;
+	border: 2px solid #ccc;
+	border-radius: 4px;
+	background-color: #f8f8f8;
+	resize: none;
+}
+
+.btn{
+	margin: 8px 0 2% 25%;
+}
+/* End of form in help centre page */
+
+.click, .popup_box{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 5px;
+}
+.click{
+    width: 10%;
+    background-color: #4CAF50;
+    color: white;
+    position: relative;
+    padding: 14px 20px;
+    margin: 0 0 0 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.popup_box{
+  width: 400px;
+  background: #f2f2f2;
+  text-align: center;
+  align-items: center;
+  padding: 40px;
+  border: 1px solid #b3b3b3;
+  box-shadow: 0px 5px 10px rgba(0,0,0,.2);
+  z-index: 9999;
+  display: none;
+}
+.popup_box i{
+  font-size: 60px;
+  color: #7CFC00;
+  border: 5px solid #7CFC00;
+  padding: 5% 10%;
+  border-radius: 50%;
+  margin: -10px 0 20px 0;
+}
+.popup_box h1{
+  font-size: 30px;
+  color: #1b2631;
+  margin-bottom: 5%;
+}
+.popup_box p{
+  font-size: 23px;
+  color: #404040;
+}
+.popup_box .btns{
+  margin: 40px 0 0 0;
+}
+.btns .btn1{
+  background: #999999;
+  color: white;
+  font-size: 18px;
+  border-radius: 5px;
+  border: 1px solid #808080;
+  padding: 10px 13px;
+}
+
+.btns .btn1:hover{
+  transition: .5s;
+  background: #8c8c8c;
+}
