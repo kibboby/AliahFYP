@@ -22,8 +22,10 @@ $Sql_Query = "update salesperson set sales_name='$sales_name',sales_email='$sale
 if (mysqli_query($conn, $Sql_Query)) {
     $MSG = "Details updated!";
     $json = json_encode($MSG);
+    echo $json;
 } else {
     echo 'Try Again' . $conn->error;
 }
 
-echo $json;
+
+mysqli_close($conn);

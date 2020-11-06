@@ -7,7 +7,7 @@ $Received_JSON = file_get_contents('php://input');
 $obj = json_decode($Received_JSON, true);
 $task_id = $obj["id"];
 
-$sqli = "update task set task_status=Completed where task_id='$task_id'";
+$sqli = "update task set task_status='Completed' where task_id='$task_id'";
 $resulti = mysqli_query($conn, $sqli);
 $json = "";
 

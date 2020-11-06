@@ -12,7 +12,7 @@ $location = $obj ["task_location"];
 $taskNotes = $obj["task_comments"];
 $task_id = $obj["task_id"];
 
-$sqli = "update task set task_date='$date', task_time='$time',
+$sqli = "update task set task_id='$task_id',task_date='$date', task_time='$time',task_status='Upcoming',
 task_comments='$taskNotes', location='$location' where task_id='$task_id'";
 $resulti = mysqli_query($conn, $sqli);
 $json = "";
