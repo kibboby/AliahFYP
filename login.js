@@ -1,24 +1,128 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
 //import React from 'react';
-import { StyleSheet, Text, View, TextInput, Button,TouchableOpacity, ImageBackground} from 'react-native';
+import { StyleSheet, Text, View, TextInput,TouchableOpacity, ImageBackground} from 'react-native';
+import { Base64 } from 'js-base64';
 
 
 //export default function App() {
 export default class Touchables extends Component {
 
+////////////////////////testing//////////////////////////
  _onPressLoginButton() {
-    alert('Wrong username/password')
+    //alert('Wrong username/password')
+    //this.props.navigation.navigate('./Dashboard_CA.js')
+    var responseJsonFromServer='CA';
+
+    if(responseJsonFromServer== 'CA')
+            {
+            //Then open Profile activity and send user email to profile activity.
+            ////this.props.navigation.navigate('Second', { Email: UserEmail });
+            //alert('Log in as Company admin')
+            this.props.navigation.navigate('CAPage')
+            }
+
+    else if(responseJsonFromServer == 'SL')
+            {
+            //Then open Profile activity and send user email to profile activity.
+           ////this.props.navigation.navigate('Second', { Email: UserEmail });
+            //alert('Log in as Salesperson')
+            this.props.navigation.navigate('SLPage')
+            }
+
+    else if(responseJsonFromServer == 'SA')
+            {
+            //Then open Profile activity and send user email to profile activity.
+            ////this.props.navigation.navigate('Second', { Email: UserEmail });
+             //alert('Log in as Super admin')
+             this.props.navigation.navigate('SAPage')
+            }
+    else
+    {
+        alert('Invalid username/password')
+    }
   }
+//////////////////////////////////////////////////
 
   _onPressForgotButton() {
-    alert('You May Reset Your Password Here')
+    //alert('You May Reset Your Password Here')
+    this.props.navigation.navigate('Forgot')
   }
 
-   state={
-    user:"",
-    password:""
-  }
+   //state={
+   // user:"",
+   //password:"",
+  //}
+
+  static navigationOptions = {
+    headerShown:false,
+  };
+
+  constructor() {
+        super();
+        this.state = {
+            LOGIN_username: '',
+            LOGIN_password: '',
+            ActivityIndicator_Loading: false,
+        }
+    }
+
+    _Login_MySQL() {
+        const url = 'http://192.168.43.207:80/Backend/Login.php';
+        fetch( url,
+            {
+                method: 'POST',
+                headers:
+                {
+                   'Origin': '*',
+                   'Accept': 'application/json',
+                   'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(
+                    {
+                        username: this.state.LOGIN_username,
+                        //password: this.state.LOGIN_password
+                        password: Base64.encode(this.state.LOGIN_password)
+                    })
+
+            }).then((response) => response.json()).then((responseJsonFromServer) => {
+
+            //var responseJsonFromServer =JSON.parse(responseJsonFromServer);
+
+            if(responseJsonFromServer== 'CA')
+            {
+            //Then open Profile activity and send user email to profile activity.
+            ////this.props.navigation.navigate('Second', { Email: UserEmail });
+            //alert('Log in as Company admin')
+            this.props.navigation.navigate('CAPage',{p1:this.state. LOGIN_username})
+            }
+
+             else if(responseJsonFromServer == 'SL')
+            {
+            //Then open Profile activity and send user email to profile activity.
+           ////this.props.navigation.navigate('Second', { Email: UserEmail });
+            //alert('Log in as Salesperson')
+            this.props.navigation.navigate('SLPage',{p1:this.state. LOGIN_username})
+            }
+
+             else if(responseJsonFromServer == 'SA')
+            {
+            //Then open Profile activity and send user email to profile activity.
+            ////this.props.navigation.navigate('Second', { Email: UserEmail });
+             //alert('Log in as Super admin')
+             this.props.navigation.navigate('SAPage',{p1:this.state. LOGIN_username})
+            }
+            else
+            {
+            alert('Invalid USERNAME or PASSWORD')
+            //alert(responseJsonFromServer)
+            }
+
+            }).catch((error) => {
+                console.log(error);
+            });
+    }
+ 
 
     
  render() {
@@ -37,8 +141,8 @@ export default class Touchables extends Component {
       <Text style={styles.username}>Username : </Text>
       <TextInput 
       style={styles.input}
-      placeholder='User'
-      onChangeText={text => this.setState({user:text})}
+      placeholder='username'
+      onChangeText={text => this.setState({LOGIN_username:text})}
        />
     </View>
 
@@ -47,14 +151,14 @@ export default class Touchables extends Component {
       <TextInput 
       secureTextEntry={true} 
       style={styles.input}
-      placeholder='Psw'
-      onChangeText={text => this.setState({password:text})}
+      placeholder='password'
+      onChangeText={text => this.setState({LOGIN_password:text})}
       />
     </View>
 
     <View>
      <TouchableOpacity
-      onPress={this._onPressForgotButton}>
+      onPress={() => this._onPressForgotButton()}>
           <Text style={styles.forgot}>Forgot Password?</Text>
      </TouchableOpacity>
     </View>
@@ -62,13 +166,13 @@ export default class Touchables extends Component {
     <View>
         <TouchableOpacity
          style={styles.LoginButton}
-         onPress={this._onPressLoginButton}
+         onPress={() => this._Login_MySQL()}
+         //onPress={() => this._onPressLoginButton()}
          //disabled={!this.state.isFormValid}
          >
          <Text style={styles.Login}>SIGN IN</Text>
      </TouchableOpacity>
      </View>
-
      </View>
 
   
