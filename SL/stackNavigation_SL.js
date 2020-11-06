@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
+import { NavigationContainer } from '@react-navigation/native';
 //Bottom Tab Navigation
 import DashBoardSales from './Dashboard_SL.js';
 import History from "./TaskHistory_SL.js";
@@ -47,6 +47,7 @@ const AccountStack = createStackNavigator();
 
 function MyTabs() {
   return (
+    <NavigationContainer>
     <Tab.Navigator
       initialRouteName="Dashboard"
       tabBarOptions={{
@@ -94,13 +95,14 @@ function MyTabs() {
         }}
       />
     </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
 function HomeStackNav() {
   return (
     <HomeStack.Navigator>
-      <HomeStack.Screen name="Dashboard" component={DashBoardSales} />
+      <HomeStack.Screen name="Dashboard" component={DashBoardSales} options={{headerShown: false}}/>
       <HomeStack.Screen name="Remarks" component={Remarks} />
       <HomeStack.Screen name="Edit Remarks" component={EditRemarks}/>
       <HomeStack.Screen name="Lead Detail" component={LeadsDetail} />
@@ -120,7 +122,7 @@ function HomeStackNav() {
 function HistoryStackNav() {
   return (
     <HistoryStack.Navigator>
-      <HistoryStack.Screen name="History" component={History} />
+      <HistoryStack.Screen name="History" component={History} options={{headerShown: false}}/>
     </HistoryStack.Navigator>
   )
 }
@@ -128,7 +130,7 @@ function HistoryStackNav() {
 function ReportStackNav() {
   return (
     <ReportStack.Navigator>
-      <ReportStack.Screen name="Report Button" component={Report}/>
+      <ReportStack.Screen name="Report Button" component={Report} options={{headerShown: false}}/>
       <ReportStack.Screen name="Won Leads Report" component={WonLeadReport}/>
       <ReportStack.Screen name="Lost Leads Report" component={LostLeadReport}/>
       <ReportStack.Screen name="Lead Detail" component={LeadsDetail}/>
@@ -139,7 +141,7 @@ function ReportStackNav() {
 function AccountStackNav(){
   return(
     <AccountStack.Navigator>
-      <AccountStack.Screen name="Account" component={Profile}/>
+      <AccountStack.Screen name="Account" component={Profile} options={{headerShown: false}}/>
       <AccountStack.Screen name="Account Settings" component={AccountSettings}/>
       <AccountStack.Screen name="Profile Settings" component={ProfileSettings}/>
       <AccountStack.Screen name="Notification Settings" component={NotificationSettings}/>
