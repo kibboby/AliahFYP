@@ -3,6 +3,7 @@
 if (isset($_GET["sales_username"])) {
     $sales_username = $_GET["sales_username"];
 }
+$sales_username = 'Mr Pimple';
 
 include "config.php";
 
@@ -18,7 +19,7 @@ if ($result->num_rows > 0) {
         $json = json_encode($tem);
     }
 } else {
-    $json = "No upcoming task!";
+    $json = "No completed task!";
 }
 
 echo $json;

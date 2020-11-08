@@ -1,7 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {Component} from 'react';
 import { render } from 'react-dom';
-import { StyleSheet, Text, View, SafeAreaView, ScrollView,FlatList } from 'react-native';
+import { Card } from 'react-native-paper';
+import { StyleSheet, Text, View, SafeAreaView, ScrollView,FlatList,TouchableOpacity } from 'react-native';
 
 export default class App extends Component {
   constructor(props) {
@@ -24,7 +25,7 @@ export default class App extends Component {
     const encodedValue = {
       encodedSalesName: this.props.sales_username
     }
-    return fetch(`http://192.168.43.175:80/Backend/retrieveLeadsTaskList.php?sales_username=${encodeURIComponent(this.state.sales_username)}`)
+    return fetch(`http://192.168.43.175:80/Backend/retrieveCompletedTask.php?sales_username=${encodeURIComponent(this.state.sales_username)}`)
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
@@ -121,4 +122,126 @@ const styles = StyleSheet.create({
     //fontWeight:"bold",
 
   },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    padding: '5%',
+  },
+
+  title: {
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+
+  row: {
+    flexDirection: "row",
+    marginTop: 10,
+    marginBottom: 10,
+  },
+
+  WonButton: {
+    backgroundColor: "green",
+    alignItems: "center",
+    padding: 5,
+    borderRadius: 5,
+  },
+
+  LoseButton: {
+    backgroundColor: "red",
+    marginLeft: 10,
+    alignItems: "center",
+    padding: 5,
+    borderRadius: 5,
+  },
+
+  buttoncontent: {
+    color: "white",
+    fontWeight: "bold",
+  },
+
+  details: {
+    width: "30%",
+    color: "grey"
+  },
+
+  info: {
+    fontWeight: "bold",
+    width: '50%',
+  },
+
+  border: {
+    marginTop: 10,
+    borderWidth: 1,
+    padding: '3%',
+  },
+
+  bordertext: {
+    fontWeight: "bold",
+  },
+  title2: {
+    fontWeight: "bold",
+    fontSize: 20,
+    marginTop: 40,
+  },
+
+  list: {
+    marginTop: 20,
+  },
+
+  TaskTitle: {
+    fontFamily: 'Roboto',
+    fontSize: 16,
+    marginTop: 20,
+    marginStart: 15,
+    fontWeight: 'bold'
+  },
+  Task: {
+    flexDirection: 'row',
+    backgroundColor: 'palegreen',
+    paddingTop: 10,
+    paddingLeft: 10,
+    paddingRight: 5,
+    flex: 1,
+    borderRadius: 10,
+  },
+  TaskOverdue: {
+    flexDirection: 'row',
+    backgroundColor: 'red',
+    paddingTop: 10,
+    paddingLeft: 10,
+    paddingRight: 5,
+    flex: 1,
+    borderRadius: 10,
+  },
+  Task2: {
+    flexDirection: 'row',
+  },
+  Date: {
+    marginStart: 5,
+  },
+  TypeOverdue: {
+    color: 'white',
+  },
+  DateOverdue: {
+    marginStart: 5,
+    color: 'white'
+  },
+  card: {
+    margin: 5,
+    borderRadius: 10,
+  },
+  TaskCompleted: {
+    flexDirection: 'row',
+    backgroundColor: 'grey',
+    paddingTop: 5,
+    paddingLeft: 10,
+    paddingRight: 5,
+    flex: 1,
+    borderRadius: 10,
+  },
+  icon: {
+    padding: 5,
+    marginTop: 2,
+    marginLeft: 5
+  }
 });
