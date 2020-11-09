@@ -51,7 +51,11 @@ function MyTabs() {
     <Tab.Navigator
       initialRouteName="Dashboard"
       tabBarOptions={{
-        activeTintColor: '#000000',
+        activeTintColor: '#ff8c00',
+        headerShown: false,
+        style: {
+          backgroundColor: 'black',
+        }
       }}
     >
       <Tab.Screen

@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, Text, View, TextInput, Switch, ScrollView, StackScreen } from 'react-native';
+import { StyleSheet, FlatList, TouchableOpacity, Text, View, TextInput, Switch, ScrollView, StackScreen } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import TimePicker from "react-native-24h-timepicker";
 
@@ -18,8 +18,9 @@ export default class callTask extends React.Component {
 
   componentDidMount() {
     this.setState({
-      task_id: this.props.route.param.task_id
+      task_id: this.props.route.params.task_id
     });
+    this._TaskDetails();
   }
 
   onCancel() {
@@ -30,6 +31,20 @@ export default class callTask extends React.Component {
     this.setState({ time: `${hour}:${minute}` });
     this.TimePicker.close();
   }
+
+  _TaskDetails() {
+    return fetch(`http://192.168.43.175:80/Backend/retrieveTaskDetails.php?task_id=${encodeURIComponent(this.props.route.params.task_id)}`)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          dataSource: responseJson
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
 
   _Insert_Data_Into_MySQL() {
     const url = 'http://192.168.43.175:80/Backend/editAppointmentTaskDetails.php';
@@ -62,94 +77,101 @@ export default class callTask extends React.Component {
 
   render() {
     return (
-      <View>
-        <View>
-          <Text style={styles.Title}>Date:</Text>
-          <DatePicker
-            style={{ width: 300 }}
-            date={this.state.date}
-            mode="date"
-            placeholder="select date"
-            format="YYYY-MM-DD"
-            minDate="2016-05-01"
-            maxDate="2016-06-01"
-            confirmBtnText="Confirm"
-            cancelBtnText="Cancel"
-            customStyles={{
-              dateIcon: {
-                position: 'absolute',
-                left: 0,
-                top: 4,
-                marginLeft: 0
-              },
-              dateInput: {
-                marginLeft: 36
-              }
-              // ... You can check the source to find the other keys.
-            }}
-            value={this.state.date}
-            onDateChange={(date) => { this.setState({ date: date }) }}
-          />
-        </View>
-        <View style={Timestyles.container}>
-          <Text style={Timestyles.text}>Time: {this.state.time}</Text>
-          <TouchableOpacity
-            onPress={() => this.TimePicker.open()}
-            style={Timestyles.button}
-          >
-            <Text style={Timestyles.buttonText}>TIME</Text>
-          </TouchableOpacity>
-          <TimePicker
-            ref={ref => {
-              this.TimePicker = ref;
-            }}
-            value={this.state.time}
-            onCancel={() => this.onCancel()}
-            onConfirm={(hour, minute) => this.onConfirm(hour, minute)}
-          />
-        </View>
+      <ScrollView>
+        <Text>{this.state.task_id}</Text>
+        <FlatList
+          data={this.state.dataSource}
+          renderItem={({ item }) => {
+            return (
+              <View>
+                <View>
+                  <Text style={styles.Title}>Date:</Text>
+                  <DatePicker
+                    style={{ width: 300 }}
+                    date={this.state.date}
+                    mode="date"
+                    placeholder="select date"
+                    format="DD/MM/YYYY"
+              minDate="09/11/2020"
+              maxDate="09/11/2040"
+                    confirmBtnText="Confirm"
+                    cancelBtnText="Cancel"
+                    customStyles={{
+                      dateIcon: {
+                        position: 'absolute',
+                        left: 0,
+                        top: 4,
+                        marginLeft: 0
+                      },
+                      dateInput: {
+                        marginLeft: 36
+                      }
+                      // ... You can check the source to find the other keys.
+                    }}
+                    value={this.state.date}
+                    onDateChange={(date) => { this.setState({ date: date }) }}
+                  />
+                </View>
+                <View style={Timestyles.container}>
+                  <Text style={Timestyles.text}>Time: {this.state.time}</Text>
+                  <TouchableOpacity
+                    onPress={() => this.TimePicker.open()}
+                    style={Timestyles.button}
+                  >
+                    <Text style={Timestyles.buttonText}>TIME</Text>
+                  </TouchableOpacity>
+                  <TimePicker
+                    ref={ref => {
+                      this.TimePicker = ref;
+                    }}
+                    value={this.state.time}
+                    onCancel={() => this.onCancel()}
+                    onConfirm={(hour, minute) => this.onConfirm(hour, minute)}
+                  />
+                </View>
 
-        <View>
-          <Text style={Timestyles.text2}>Location</Text>
-          <TextInput
-            style={styles.commentSection}
-            placeholderTextColor="black"
-            placeholder='Comment Here'
-            multiline={true}
-            numberOfLines={4}
-            width="100%"
-            value={this.state.location}
-            onChangeText={text => this.setState({ location: text })} />
-          <StatusBar style="auto" />
-        </View>
-        <View>
-          <Text style={styles.allDay}>Notes</Text>
-          <TextInput
-            style={styles.commentSection}
-            placeholderTextColor="black"
-            placeholder='Comment Here'
-            multiline={true}
-            value={this.state.notes}
-            numberOfLines={4} />
-          <StatusBar style="auto" />
-        </View>
-        <View>
-          <TouchableOpacity onPress={() => this._Insert_Data_Into_MySQL()}>
-            <Text style={buttonStyles.text}>
-              Done
+                <View>
+                  <Text style={Timestyles.text2}>Location</Text>
+                  <TextInput
+                    style={styles.commentSection}
+                    placeholderTextColor="black"
+                    placeholder='Comment Here'
+                    multiline={true}
+                    numberOfLines={4}
+                    width="100%"
+                    value={this.state.location}
+                    onChangeText={text => this.setState({ location: text })} />
+                  <StatusBar style="auto" />
+                </View>
+                <View>
+                  <Text style={styles.allDay}>Notes</Text>
+                  <TextInput
+                    style={styles.commentSection}
+                    placeholderTextColor="black"
+                    placeholder='Comment Here'
+                    multiline={true}
+                    value={this.state.notes}
+                    numberOfLines={4} />
+                  <StatusBar style="auto" />
+                </View>
+                <View>
+                  <TouchableOpacity onPress={() => this._Insert_Data_Into_MySQL()}>
+                    <Text style={buttonStyles.text}>
+                      Done
             </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.navigation.navigate('Call Task Detail')}>
-            <Text style={buttonStyles.text}>
-              Cancel
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+                    <Text style={buttonStyles.text}>
+                      Cancel
             </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )
+          }} />
+      </ScrollView>
+    )
   }
-
 }
 
 

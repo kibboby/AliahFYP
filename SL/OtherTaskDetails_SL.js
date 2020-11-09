@@ -29,7 +29,7 @@ export default class SalesPersonAccount extends Component {
     }
 
     _TaskDetails() {
-        return fetch(`http://192.168.43.175:80/Backend/retrieveTaskDetails.php?task_id=${encodeURIComponent(this.state.task_id)}`)
+        return fetch(`http://192.168.43.175:80/Backend/retrieveTaskDetails.php?task_id=${encodeURIComponent(this.props.route.params.task_Id)}`)
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({
@@ -62,7 +62,7 @@ export default class SalesPersonAccount extends Component {
             }).catch((error) => {
                 console.log(error)
             });
-        this.props.navigation.navigate("Lead Detail");
+        this.props.navigation.goBack();
     }
 
     createDeleteAlert(task_id) {
@@ -85,7 +85,7 @@ export default class SalesPersonAccount extends Component {
         return (
             <ScrollView>
                 <View style={{ flex: 1, padding: "10%" }}>
-                    <Text style={styles.title}>CALL'S DETAIL</Text>
+                    <Text style={styles.title}>TASK'S DETAIL</Text>
                     <FlatList
                         data={this.state.dataSource}
                         renderItem={({ item }) => {
@@ -112,14 +112,14 @@ export default class SalesPersonAccount extends Component {
 
                                         <View style={styles.Direction2}>
                                             <TouchableOpacity style={styles.buttons} onPress={() => this.createDeleteAlert(task_id)}>
-                                                <Icon2 name="trash" size={20} color='#ffffff' />
-                                                <Text style={{ color: '#ffffff' }}>Delete Task</Text>
+                                                <Icon2 name="trash" size={20} color='#ff8c00' />
+                                                <Text style={{ color: '#ff8c00' }}>Delete Task</Text>
                                             </TouchableOpacity>
                                             <TouchableOpacity style={styles.buttons} onPress={() => this.props.navigation.navigate('Edit Other Task', {
                                                 task_id: this.state.task_id
                                             })}>
-                                                <Icon2 name="edit" size={20} color='#ffffff' />
-                                                <Text style={{ color: '#ffffff' }}>Edit Task</Text>
+                                                <Icon2 name="edit" size={20} color='#ff8c00' />
+                                                <Text style={{ color: '#ff8c00' }}>Edit Task</Text>
                                             </TouchableOpacity>
                                         </View>
                                     </View>

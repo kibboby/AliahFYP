@@ -1,14 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component, useState } from 'react';
 import {
-  StyleSheet, Text, Switch, View, TouchableOpacity, Alert, SafeAreaView,
+  StyleSheet, Text, RefreshControl, View, TouchableOpacity, Alert, SafeAreaView,
   ScrollView, FlatList
 } from 'react-native';
-import { Card } from 'react-native-paper';
+import { Card, ActivityIndicator } from 'react-native-paper';
 import ModalSelector from 'react-native-modal-selector'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icon2 from 'react-native-vector-icons/Feather';
 import moment from 'moment';
+import Constants from 'expo-constants';
 
 export default class App extends Component {
   constructor(props) {
@@ -20,10 +21,13 @@ export default class App extends Component {
       lead_contact: '',
       task_id: '',
       leads_status: '',
-      currentDay: moment().format('D'),
-      CurrentMonth: moment().format("MM"),
-      CurrentYear: moment().format("YYYY"),
+      isLoading: true,
+      refreshing: false,
       diffDate: '',
+      dataSource: '',
+      CurrentYear: moment().format("YYYY"),
+      CurrentMonth: moment().format("MM"),
+      currentDay: moment().format("DD"),
     }
   }
 
@@ -43,7 +47,10 @@ export default class App extends Component {
   }
 
   LeadsDetailsItem() {
-    return fetch('http://192.168.43.175:80/Backend/leadsDetails.php')
+    const encodedValue = {
+      encodedName: this.props.route.params.leads_name,
+    }
+    return fetch(`http://192.168.43.175:80/Backend/leadsDetails.php?lead_name=${encodeURIComponent(encodedValue.encodedName)}`)
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
@@ -93,7 +100,7 @@ export default class App extends Component {
       }).catch((error) => {
         console.log(error)
       });
-    this.props.navigation.navigate("Lead Detail");
+      this.forceUpdate();
   }
 
   _deleteTask(task_id) {
@@ -117,7 +124,7 @@ export default class App extends Component {
       }).catch((error) => {
         console.log(error)
       });
-    this.props.navigation.navigate("Lead Detail");
+      this.forceUpdate();
   }
 
   _updateLeadStatus(leadsID, updatedStatus) {
@@ -142,7 +149,7 @@ export default class App extends Component {
       }).catch((error) => {
         console.log(error)
       });
-    this.props.navigation.navigate("Lead Detail");
+      this.forceUpdate();
   }
 
   createStatusWonAlert(leads_id) {
@@ -238,17 +245,24 @@ export default class App extends Component {
     var day = taskDate.substr(0, 2);
     var Month = taskDate.substr(3, 2);
     var Year = taskDate.substr(6, 9);
-
-    this.state.day = day;
-    this.state.month = Month;
-    this.state.year = Year;
-
     var dateOne = moment([this.state.CurrentYear, this.state.CurrentMonth, this.state.currentDay]);
-    this.state.cDate = dateOne;
     var dateTwo = moment([Year, Month, day]);
-    this.state.cDate2 = dateTwo;
     var result = dateTwo.diff(dateOne, 'days');
     this.state.diffDate = result;
+  }
+
+  _refreshControl(){
+    return(
+      <RefreshControl
+        refreshing={this.state.refreshing}
+        onRefresh={()=>this._refreshListView()} />
+    )
+  }
+
+  _refreshListView(){
+    this.setState({ refreshing: true})
+    this._retrieveLeadsTaskList()
+    this.setState({refreshing: false})
   }
 
   render() {
@@ -263,261 +277,248 @@ export default class App extends Component {
       { key: index++, label: 'Appointment' },
       { key: index++, label: 'Other' },
     ];
+
+    if (this.state.isLoading) {
+      return (
+        <View style={{ flex: 1, paddingTop: 20 }}>
+          <ActivityIndicator />
+        </View>
+      );
+    }
     return (
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.container}>
-          <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>LEAD'S DETAIL</Text>
-            <FlatList
-              data={this.state.dataSource}
-              renderItem={({ item }) => {
-                this.state.leads_status = item.status;
-                if (item.status == "Open") {
+      <ScrollView style={styles.container}>
+        <Text style={styles.title}>LEAD'S DETAIL</Text>
+        <FlatList
+          data={this.state.dataSource}
+          renderItem={({ item }) => {
+            this.state.leads_status = item.status;
+            if (item.status == "Open") {
+              return (
+                <View>
+                  <View style={styles.row}>
+                    <TouchableOpacity
+                      style={styles.WonButton}
+                      onPress={() => { this.createStatusWonAlert(item.lead_id) }}
+                    >
+                      <Text style={styles.buttoncontent}>WON</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.LoseButton}
+                      onPress={() => { this.createStatusLoseAlert(item.lead_id) }}
+                    >
+                      <Text style={styles.buttoncontent}>LOSE</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )
+            }
+
+            else if (item.status == "Won") {
+              return (
+                <View>
+                  <View style={styles.row}>
+                    <TouchableOpacity
+                      style={styles.WonButton}
+                    >
+                      <Text style={styles.buttoncontent}>WON</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )
+            }
+
+            else if (item.status == "Lose") {
+              return (
+                <View>
+                  <View style={styles.row}>
+                    <TouchableOpacity
+                      style={styles.LoseButton}
+                    >
+                      <Text style={styles.buttoncontent}>LOSE</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )
+            }
+          }
+          }
+        />
+
+        <FlatList
+          data={this.state.dataSource}
+          renderItem={({ item }) => {
+            if (this.state.leads_status == "Open") {
+              return (
+                <View>
+                  <View style={styles.row}>
+                    <Text style={styles.details}>Name</Text>
+                    <Text style={styles.info} >{item.lead_name}</Text>
+                  </View>
+
+                  <View style={styles.row}>
+                    <Text style={styles.details}>Email</Text>
+                    <Text style={styles.info}>{item.lead_email}</Text>
+                  </View>
+
+                  <View style={styles.row}>
+                    <Text style={styles.details}>Contact</Text>
+                    <Text style={styles.info}>{item.lead_contact}</Text>
+                  </View>
+
+                  <View style={styles.row}>
+                    <Text style={styles.details}>Company</Text>
+                    <Text style={styles.info}>{item.lead_company}</Text>
+                  </View>
+
+                  <View style={styles.row}>
+                    <Text style={styles.details}>Interest</Text>
+                    <Text style={styles.info}>{item.interest}</Text>
+                  </View>
+
+                  <View style={styles.row}>
+                    <Text style={styles.details}>Comment</Text>
+                    <Text style={styles.info}>{item.comments}</Text>
+                  </View>
+
+                  <ModalSelector
+                    data={data}
+                    initValue="Create New Task"
+                    onChange={(option) => {
+                      if (option.label == "Call") {
+                        this.props.navigation.navigate('Create Call Task',
+                          {
+                            leads_name: this.state.leads_name,
+                            sales_username: this.state.sales_username
+                          })
+                      } else if (option.label == "Appointment") {
+                        this.props.navigation.navigate('Create Appointment Task',
+                          {
+                            leads_name: this.state.leads_name,
+                            sales_username: this.state.sales_username
+                          })
+                      }
+                      else {
+                        this.props.navigation.navigate('Create Other Task',
+                          {
+                            leads_name: this.state.leads_name,
+                            sales_username: this.state.sales_username
+                          })
+                      }
+                    }} />
+
+                </View>
+              )
+            }
+
+            else if (this.state.leads_status != "Open") {
+              return (
+                <View>
+                  <View style={styles.row}>
+                    <Text style={styles.details}>Name</Text>
+                    <Text style={styles.info} >{item.lead_name}</Text>
+                  </View>
+
+                  <View style={styles.row}>
+                    <Text style={styles.details}>Email</Text>
+                    <Text style={styles.info}>{item.lead_email}</Text>
+                  </View>
+
+                  <View style={styles.row}>
+                    <Text style={styles.details}>Contact</Text>
+                    <Text style={styles.info}>{item.lead_contact}</Text>
+                  </View>
+
+                  <View style={styles.row}>
+                    <Text style={styles.details}>Company</Text>
+                    <Text style={styles.info}>{item.lead_company}</Text>
+                  </View>
+
+                  <View style={styles.row}>
+                    <Text style={styles.details}>Interest</Text>
+                    <Text style={styles.info}>{item.interest}</Text>
+                  </View>
+
+                  <View style={styles.row}>
+                    <Text style={styles.details}>Comment</Text>
+                    <Text style={styles.info}>{item.comments}</Text>
+                  </View>
+                </View>
+              )
+            }
+          }} />
+
+        <Text style={styles.title2}>TASKS</Text>
+        <View style={styles.list}>
+          <FlatList
+            data={this.state.TaskList}
+            extraData={this.state}
+            refreshControl={this._refreshControl()}
+            renderItem={({ item }) => {
+              if (item.task_status == "Upcoming") {
+                this.validateDate(item.task_date);
+                if (this.state.diffDate > 0) {
                   return (
-                    <View>
-                      <View style={styles.row}>
-                        <TouchableOpacity
-                          style={styles.WonButton}
-                          onPress={() => { this.createStatusWonAlert(item.lead_id) }}
-                        >
-                          <Text style={styles.buttoncontent}>WON</Text>
+                    <Card style={styles.card}>
+                      <View style={styles.Task2}>
+                        <TouchableOpacity style={{ flex: 1 }} onPress={() => {
+                          this.redirectTaskDetailPage(item.task_title, item.task_id)
+                        }}>
+                          <View style={styles.Task}>
+                            <Text style={styles.Type}>{item.task_title}</Text>
+                            <Text style={styles.Date}> | </Text>
+                            <Text style={styles.Date}>{item.task_date}</Text>
+                          </View>
                         </TouchableOpacity>
-                        <TouchableOpacity
-                          style={styles.LoseButton}
-                        onPress={() => {this.createStatusLoseAlert(item.lead_id)}}
-                        >
-                          <Text style={styles.buttoncontent}>LOSE</Text>
-                        </TouchableOpacity>
+                        <Icon2 name="trash-2" size={20} color={'black'} style={styles.icon} onPress={() => this.createDeleteAlert(item.task_id)} />
+                        <Icon name="done" size={20} color={'green'} style={styles.icon} onPress={() => { this.createCompletionAlert(item.task_id) }} />
                       </View>
-                    </View>
+                    </Card>
                   )
                 }
-
-                else if (item.status == "Won") {
+                else if (this.state.diffDate < 0) {
                   return (
-                    <View>
-                      <View style={styles.row}>
-                        <TouchableOpacity
-                          style={styles.WonButton}
-                        >
-                          <Text style={styles.buttoncontent}>WON</Text>
+                    <Card style={styles.card}>
+                      <View style={styles.Task2}>
+                        <TouchableOpacity style={{ flex: 1 }} onPress={() => {
+                          this.redirectTaskDetailPage(item.task_title, item.task_id)
+                        }}>
+                          <View style={styles.TaskOverdue}>
+                            <Text style={styles.TypeOverdue}>{item.task_title}</Text>
+                            <Text style={styles.DateOverdue}> | </Text>
+                            <Text style={styles.DateOverdue}>{item.task_date}</Text>
+                          </View>
                         </TouchableOpacity>
+                        {/* <Text style={styles.icon}>Overdue!</Text> */}
+                        <Icon2 name="trash-2" size={20} color={'black'} style={styles.icon} onPress={() => this.createDeleteAlert(item.task_id)} />
+                        <Icon name="done" size={20} color={'green'} style={styles.icon} onPress={() => { this.createCompletionAlert(item.task_id) }} />
                       </View>
-                    </View>
-                  )
-                }
-
-                else if (item.status == "Lose") {
-                  return (
-                    <View>
-                      <View style={styles.row}>
-                        <TouchableOpacity
-                          style={styles.LoseButton}
-                        >
-                          <Text style={styles.buttoncontent}>LOSE</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
+                    </Card>
                   )
                 }
               }
-              }
-            />
-
-            <FlatList
-              data={this.state.dataSource}
-              renderItem={({ item }) => {
-                if (this.state.leads_status == "Open") {
-                  return (
-                    <View>
-                      <View style={styles.row}>
-                        <Text style={styles.details}>Name</Text>
-                        <Text style={styles.info} >{item.lead_name}</Text>
-                      </View>
-
-                      <View style={styles.row}>
-                        <Text style={styles.details}>Email</Text>
-                        <Text style={styles.info}>{item.lead_email}</Text>
-                      </View>
-
-                      <View style={styles.row}>
-                        <Text style={styles.details}>Contact</Text>
-                        <Text style={styles.info}>{item.lead_contact}</Text>
-                      </View>
-
-                      <View style={styles.row}>
-                        <Text style={styles.details}>Company</Text>
-                        <Text style={styles.info}>{item.lead_company}</Text>
-                      </View>
-
-                      <View style={styles.row}>
-                        <Text style={styles.details}>Interest</Text>
-                        <Text style={styles.info}>{item.interest}</Text>
-                      </View>
-
-                      <View style={styles.row}>
-                        <Text style={styles.details}>Comment</Text>
-                        <Text style={styles.info}>{item.comments}</Text>
-                      </View>
-
-                      <ModalSelector
-                        data={data}
-                        initValue="Create New Task"
-                        onChange={(option) => {
-                          if (option.label == "Call") {
-                            this.props.navigation.navigate('Create Call Task',
-                              {
-                                leads_name: this.state.leads_name,
-                                sales_username: this.state.sales_username
-                              })
-                          } else if (option.label == "Appointment") {
-                            this.props.navigation.navigate('Create Appointment Task',
-                              {
-                                leads_name: this.state.leads_name,
-                                sales_username: this.state.sales_username
-                              })
-                          }
-                          else {
-                            this.props.navigation.navigate('Create Other Task',
-                              {
-                                leads_name: this.state.leads_name,
-                                sales_username: this.state.sales_username
-                              })
-                          }
-                        }} />
-
-                    </View>
-                  )
-                }
-
-                else if (this.state.leads_status != "Open") {
-                  return (
-                    <View>
-                      <View style={styles.row}>
-                        <Text style={styles.details}>Name</Text>
-                        <Text style={styles.info} >{item.lead_name}</Text>
-                      </View>
-
-                      <View style={styles.row}>
-                        <Text style={styles.details}>Email</Text>
-                        <Text style={styles.info}>{item.lead_email}</Text>
-                      </View>
-
-                      <View style={styles.row}>
-                        <Text style={styles.details}>Contact</Text>
-                        <Text style={styles.info}>{item.lead_contact}</Text>
-                      </View>
-
-                      <View style={styles.row}>
-                        <Text style={styles.details}>Company</Text>
-                        <Text style={styles.info}>{item.lead_company}</Text>
-                      </View>
-
-                      <View style={styles.row}>
-                        <Text style={styles.details}>Interest</Text>
-                        <Text style={styles.info}>{item.interest}</Text>
-                      </View>
-
-                      <View style={styles.row}>
-                        <Text style={styles.details}>Comment</Text>
-                        <Text style={styles.info}>{item.comments}</Text>
-                      </View>
-                    </View>
-                  )
-                }
-              }} />
-
-            <Text style={styles.title2}>TASKS</Text>
-            <View style={styles.list}>
-              <FlatList
-                data={this.state.TaskList}
-                renderItem={({ item }) => {
-                  if (item.task_status == "Upcoming") {
-                    this.validateDate(item.task_date);
-                    if (this.state.diffDate > 0) {
-                      return (
-                        <Card style={styles.card}>
-                          <View style={styles.Task2}>
-                            <TouchableOpacity style={{ flex: 1 }} onPress={() => {
-                              this.redirectTaskDetailPage(item.task_title, item.task_id)
-                            }}>
-                              <View style={styles.Task}>
-                                <Text style={styles.Type}>{item.task_title}</Text>
-                                <Text style={styles.Date}> | </Text>
-                                <Text style={styles.Date}>{item.task_date}</Text>
-                              </View>
-                            </TouchableOpacity>
-                            <Icon2 name="trash-2" size={20} color={'black'} style={styles.icon} onPress={() => this.createDeleteAlert(item.task_id)} />
-                            <Icon name="done" size={20} color={'green'} style={styles.icon} onPress={() => { this.createCompletionAlert() }} />
-                          </View>
-                        </Card>
-                      )
-                    }
-                    else if (this.state.diffDate < 0) {
-                      return (
-                        <Card style={styles.card}>
-                          <View style={styles.Task2}>
-                            <TouchableOpacity style={{ flex: 1 }} onPress={() => {
-                              this.redirectTaskDetailPage(item.task_title, item.task_id)
-                            }}>
-                              <View style={styles.TaskOverdue}>
-                                <Text style={styles.TypeOverdue}>{item.task_title}</Text>
-                                <Text style={styles.DateOverdue}> | </Text>
-                                <Text style={styles.DateOverdue}>{item.task_date}</Text>
-                              </View>
-                            </TouchableOpacity>
-                            <Text style={styles.icon}>Overdue!</Text>
-                            <Icon2 name="trash-2" size={20} color={'black'} style={styles.icon} onPress={() => this.createDeleteAlert(item.task_id)} />
-                            <Icon name="done" size={20} color={'green'} style={styles.icon} onPress={() => { this.createCompletionAlert() }} />
-                          </View>
-                        </Card>
-                      )
-                    } else {
-                      return (
-                        <Card style={styles.card}>
-                          <View style={styles.Task2}>
-                            <TouchableOpacity style={{ flex: 1 }} onPress={() => {
-                              this.redirectTaskDetailPage(item.task_title, item.task_id)
-                            }}>
-                              <View style={styles.TaskOverdue}>
-                                <Text style={styles.TypeOverdue}>{item.task_title}</Text>
-                                <Text style={styles.DateOverdue}> | </Text>
-                                <Text style={styles.DateOverdue}>{item.task_date}</Text>
-                              </View>
-                            </TouchableOpacity>
-                            <Text style={styles.icon}>Overdue!</Text>
-                            <Icon2 name="trash-2" size={20} color={'black'} style={styles.icon} onPress={() => this.createDeleteAlert(item.task_id)} />
-                            <Icon name="done" size={20} color={'green'} style={styles.icon} onPress={() => { this.createCompletionAlert() }} />
-                          </View>
-                        </Card>
-                      )
-                    }
-                  }
-                  else if (item.task_status == "Completed") {
-                    return (
-                      <Card style={styles.card}>
-                        <View style={styles.Task2}>
-                          <TouchableOpacity style={{ flex: 1 }} onPress={() => {
-                            this.redirectTaskDetailPage(item.task_title, item.task_id)
-                          }}>
-                            <View style={styles.TaskCompleted}>
-                              <Text style={styles.Type}>{item.task_title}</Text>
-                              <Text style={styles.Date}> | </Text>
-                              <Text style={styles.Date}>{item.task_date}</Text>
-                            </View>
-                          </TouchableOpacity>
-                          <Text style={styles.icon}>Completed!</Text>
+              else if (item.task_status == "Completed") {
+                return (
+                  <Card style={styles.card}>
+                    <View style={styles.Task3}>
+                      <TouchableOpacity style={{ flex: 1 }} onPress={() => {
+                        this.redirectTaskDetailPage(item.task_title, item.task_id)
+                      }}>
+                        <View style={styles.TaskCompleted}>
+                          <Text style={styles.Type}>{item.task_title}</Text>
+                          <Text style={styles.Date}> | </Text>
+                          <Text style={styles.Date}>{item.task_date}</Text>
                         </View>
-                      </Card>
-                    )
-                  }
-                }}
-              />
+                      </TouchableOpacity>
+                      <Text style={styles.icon}>Completed!</Text>
+                    </View>
+                  </Card>
+                )
+              }
+            }}
+          />
 
-            </View>
-          </SafeAreaView>
-          <StatusBar style="auto" />
-        </View >
+        </View>
+        <StatusBar style="auto" />
       </ScrollView>
     );
 
@@ -528,7 +529,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: '10%',
+    padding: '5%',
   },
 
   title: {
@@ -584,11 +585,11 @@ const styles = StyleSheet.create({
   title2: {
     fontWeight: "bold",
     fontSize: 20,
-    marginTop: 40,
+    marginTop: 30,
   },
 
   list: {
-    marginTop: 20,
+    marginTop: 10,
   },
 
   TaskTitle: {
@@ -601,7 +602,7 @@ const styles = StyleSheet.create({
   Task: {
     flexDirection: 'row',
     backgroundColor: 'palegreen',
-    paddingTop: 10,
+    paddingTop: 5,
     paddingLeft: 10,
     paddingRight: 5,
     flex: 1,
@@ -610,14 +611,20 @@ const styles = StyleSheet.create({
   TaskOverdue: {
     flexDirection: 'row',
     backgroundColor: 'red',
-    paddingTop: 10,
+    paddingTop: 5,
     paddingLeft: 10,
+    paddingBottom: 5,
     paddingRight: 5,
     flex: 1,
     borderRadius: 10,
   },
   Task2: {
     flexDirection: 'row',
+  },
+  Task3: {
+    flexDirection: 'row',
+    backgroundColor: 'palegreen',
+    borderRadius: 10,
   },
   Date: {
     marginStart: 5,
@@ -635,7 +642,7 @@ const styles = StyleSheet.create({
   },
   TaskCompleted: {
     flexDirection: 'row',
-    backgroundColor: 'grey',
+    backgroundColor: 'lightgrey',
     paddingTop: 5,
     paddingLeft: 10,
     paddingRight: 5,

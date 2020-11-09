@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, ScrollView, Text, View, TextInput, TouchableOpacity } from 'react-native';
 
 
 //export default function App() {
@@ -23,7 +23,7 @@ export default class Touchables extends Component {
   }
 
   _Insert_Data_Into_MySQL() {
-    const url = 'http://192.168.43.175:80/Backend/remarks.php';
+    const url = 'http://192.168.43.175:80/Backend/saveRemarks.php';
     fetch(url,
       {
         method: 'POST',
@@ -35,7 +35,7 @@ export default class Touchables extends Component {
         },
         body: JSON.stringify(
           {
-            LD : this.state.lead_id,
+            LD: this.state.lead_id,
             remarks: this.state.remarksDescription,
           })
 
@@ -51,28 +51,36 @@ export default class Touchables extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={styles.RemarksC}>
-          <Text style={styles.Remarks}>Remarks</Text>
-          <TextInput
-            style={styles.inputR}
-            placeholder='Write down your justification here'
-            multiline={true}
-            autoFocus={true}
-            editable={true}
-            onChangeText={text => this.setState({ remarksDescription: text })}
-          />
+      <ScrollView>
+        <View style={styles.container}>
+          <View style={styles.RemarksC}>
+            <Text style={styles.Remarks}>Remarks</Text>
+            <TextInput
+              style={styles.inputR}
+              placeholder='Write down your justification here'
+              multiline={true}
+              autoFocus={true}
+              editable={true}
+              onChangeText={text => this.setState({ remarksDescription: text })}
+            />
+          </View>
+          <View>
+            <TouchableOpacity
+              style={styles.SubmitButtonR}
+              onPress={() => { this._Insert_Data_Into_MySQL() }}
+            >
+              <Text style={styles.SubmitR} >SUBMIT</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.SubmitButtonR}
+              onPress={() => { this.props.navigation.goBack() }}
+            >
+              <Text style={styles.SubmitR} >Cancel</Text>
+            </TouchableOpacity>
+          </View>
+          <StatusBar style="auto" />
         </View>
-        <View>
-          <TouchableOpacity
-            style={styles.SubmitButtonR}
-            onPress={() => {this._Insert_Data_Into_MySQL()}}
-          >
-            <Text style={styles.SubmitR} >SUBMIT</Text>
-          </TouchableOpacity>
-        </View>
-        <StatusBar style="auto" />
-      </View>
+      </ScrollView>
     );
   }
 }

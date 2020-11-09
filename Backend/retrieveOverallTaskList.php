@@ -2,7 +2,7 @@
 
 include "config.php";
 
-$sql = "select * from task where salesperson_username='Mr Pimple'";
+$sql = "select * from task where salesperson_username='Mr Pimple' AND task_status ='Upcoming'";
 $result = mysqli_query($conn, $sql);
 $json = "";
 

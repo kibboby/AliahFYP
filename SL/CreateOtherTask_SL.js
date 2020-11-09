@@ -75,9 +75,9 @@ export default class otherTask extends React.Component {
               date={this.state.date}
               mode="date"
               placeholder="select date"
-              format="YYYY-MM-DD"
-              minDate="2016-05-01"
-              maxDate="2016-06-01"
+              format="DD/MM/YYYY"
+              minDate="09/11/2020"
+              maxDate="09/11/2040"
               confirmBtnText="Confirm"
               cancelBtnText="Cancel"
               customStyles={{
@@ -129,6 +129,11 @@ export default class otherTask extends React.Component {
             <TouchableOpacity onPress={() => this._Insert_Data_Into_MySQL()}>
               <Text style={buttonStyles.text}>
                 Done
+            </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.props.navigation.goBack()} >
+              <Text style={buttonStyles.text}>
+                Cancel
             </Text>
             </TouchableOpacity>
           </View>

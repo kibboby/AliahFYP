@@ -12,9 +12,10 @@ $resulti = mysqli_query($conn, $sqli);
 $json = "";
 
 if($resulti){
-    $json = "Successfully updated lead's status";
+    $MSG = "Successfully updated lead's status";
+    $json = json_encode($MSG);
 }else{
-    $json = "Unable to update lead's status";
+    $json = json_encode("Unable to update lead's status");
 }
 echo $json;
 

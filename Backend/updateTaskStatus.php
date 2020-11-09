@@ -12,7 +12,8 @@ $resulti = mysqli_query($conn, $sqli);
 $json = "";
 
 if($resulti){
-    $json = "Successfully updated the task";
+    $MSG = "Successfully updated task's status";
+    $json = json_encode($MSG);
 }else{
     $json = "Unable to update task";
 }

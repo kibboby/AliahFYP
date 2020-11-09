@@ -31,7 +31,7 @@ export default class callTask extends React.Component {
   }
 
   _TaskDetails() {
-    return fetch(`http://192.168.43.175:80/Backend/retrieveTaskDetails.php?task_id=${encodeURIComponent(this.state.task_id)}`)
+    return fetch(`http://192.168.43.175:80/Backend/retrieveTaskDetails.php?task_id=${encodeURIComponent(this.props.route.params.task_id)}`)
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
@@ -80,11 +80,29 @@ export default class callTask extends React.Component {
               <View style={styles.allview}>
                 <View>
                   <Text style={styles.Title}>Date: </Text>
-                  <TextInput
-                    style={{ height: 40, margin: 8, borderColor: 'black', borderWidth: 1 }}
-                    placeholder="DD/MM/YYYY"
-                    value={item.task_date}
-                    onChangeText={text => this.setState({ date: text })} />
+                  <DatePicker
+                    style={{ width: 300 }}
+                    date={this.state.date}
+                    mode="date"
+                    placeholder="select date"
+                    format="DD/MM/YYYY"
+                    minDate="09/11/2020"
+                    maxDate="09/11/2040"
+                    confirmBtnText="Confirm"
+                    cancelBtnText="Cancel"
+                    customStyles={{
+                      dateIcon: {
+                        position: 'absolute',
+                        left: 0,
+                        top: 4,
+                        marginLeft: 0
+                      },
+                      dateInput: {
+                        marginLeft: 36
+                      }
+                    }}
+                    onDateChange={(date) => { this.setState({ date: date }) }}
+                  />
                 </View>
                 <View style={Timestyles.container}>
                   <Text style={Timestyles.text}>Time: </Text>
@@ -122,7 +140,7 @@ export default class callTask extends React.Component {
                       Done
             </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => this.props.navigation.navigate('Call Task Detail')}>
+                  <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
                     <Text style={buttonStyles.text}>
                       Cancel
             </Text>

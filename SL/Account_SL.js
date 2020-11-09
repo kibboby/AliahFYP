@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { StyleSheet, Text, View, FlatList, } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
 import { Card } from 'react-native-paper';
 import Settings from 'react-native-vector-icons/AntDesign';
 import { ScrollView } from 'react-native-gesture-handler';
+import moment from 'moment';
+import Icon3 from 'react-native-vector-icons/MaterialIcons';
+import Icon2 from 'react-native-vector-icons/Feather';
 
 export default class SalesPersonAccount extends Component {
 
@@ -15,6 +18,10 @@ export default class SalesPersonAccount extends Component {
             sales_name: '',
             sales_email: '',
             sales_contact: '',
+            diffDate: '',
+            CurrentYear: moment().format("YYYY"),
+            CurrentMonth: moment().format("MM"),
+            currentDay: moment().format("DD"),
         }
     }
 
@@ -52,6 +59,16 @@ export default class SalesPersonAccount extends Component {
             .catch((error) => {
                 console.error(error);
             });
+    }
+
+    validateDate(taskDate) {
+        var day = taskDate.substr(0, 2);
+        var Month = taskDate.substr(3, 2);
+        var Year = taskDate.substr(6, 9);
+        var dateOne = moment([this.state.CurrentYear, this.state.CurrentMonth, this.state.currentDay]);
+        var dateTwo = moment([Year, Month, day]);
+        var result = dateTwo.diff(dateOne, 'days');
+        this.state.diffDate = result;
     }
 
     render() {
@@ -99,15 +116,48 @@ export default class SalesPersonAccount extends Component {
                     <Text style={styles.TaskTitle}>UPCOMING TASKS</Text>
                     <FlatList
                         data={this.state.dataSource2}
-                        renderItem={({ item }) =>
-
-                            <Card style={styles.card}>
-                                <View style={styles.Task}>
-                                    <Text style={styles.Type}>{item.task_title}</Text>
-                                    <Text style={styles.Date}> | </Text>
-                                    <Text style={styles.Date}>{item.task_date}</Text>
-                                </View>
-                            </Card>
+                        renderItem={({ item }) => {
+                            this.validateDate(item.task_date);
+                            if (this.state.diffDate > 0) {
+                                return (
+                                    <Card style={styles.card}>
+                                        <View style={styles.Task2}>
+                                            <TouchableOpacity style={{ flex: 1 }} onPress={() => {
+                                                this.redirectTaskDetailPage(item.task_title, item.task_id)
+                                            }}>
+                                                <View style={styles.Task}>
+                                                    <Text style={styles.Type}>{item.task_title}</Text>
+                                                    <Text style={styles.Date}> | </Text>
+                                                    <Text style={styles.Date}>{item.task_date}</Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                            <Icon2 name="trash-2" size={20} color={'black'} style={styles.icon} onPress={() => this.createDeleteAlert(item.task_id)} />
+                                            <Icon3 name="done" size={20} color={'green'} style={styles.icon} onPress={() => { this.createCompletionAlert(item.task_id) }} />
+                                        </View>
+                                    </Card>
+                                )
+                            }
+                            else if (this.state.diffDate < 0) {
+                                return (
+                                    <Card style={styles.card}>
+                                        <View style={styles.Task2}>
+                                            <TouchableOpacity style={{ flex: 1 }} onPress={() => {
+                                                this.redirectTaskDetailPage(item.task_title, item.task_id)
+                                            }}>
+                                                <View style={styles.TaskOverdue}>
+                                                    <Text style={styles.TypeOverdue}>{item.task_title}</Text>
+                                                    <Text style={styles.DateOverdue}> | </Text>
+                                                    <Text style={styles.DateOverdue}>{item.task_date}</Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                            {/* <Text style={styles.icon}>Overdue!</Text> */}
+                                            <Icon2 name="trash-2" size={20} color={'black'} style={styles.icon} onPress={() => this.createDeleteAlert(item.task_id)} />
+                                            <Icon3 name="done" size={20} color={'green'} style={styles.icon} onPress={() => { this.createCompletionAlert(item.task_id) }} />
+                                        </View>
+                                    </Card>
+                                )
+                            }
+                        }
                         }
                         keyExtractor={item => item.ID}
                     />
@@ -117,6 +167,7 @@ export default class SalesPersonAccount extends Component {
 
     }
 }
+
 
 const styles = StyleSheet.create({
     Direction: {
@@ -164,18 +215,57 @@ const styles = StyleSheet.create({
     },
     Task: {
         flexDirection: 'row',
-        marginTop: 5,
-        backgroundColor: 'lightgrey',
-        padding: 7,
-        marginBottom: 2,
+        backgroundColor: 'palegreen',
+        paddingTop: 5,
+        paddingLeft: 10,
+        paddingRight: 5,
+        flex: 1,
+        borderRadius: 10,
+    },
+    TaskOverdue: {
         flexDirection: 'row',
+        backgroundColor: 'red',
+        paddingTop: 5,
+        paddingLeft: 10,
+        paddingBottom: 5,
+        paddingRight: 5,
+        flex: 1,
+        borderRadius: 10,
+    },
+    Task2: {
+        flexDirection: 'row',
+    },
+    Task3: {
+        flexDirection: 'row',
+        backgroundColor: 'palegreen',
+        borderRadius: 10,
     },
     Date: {
         marginStart: 5,
     },
+    TypeOverdue: {
+        color: 'white',
+    },
+    DateOverdue: {
+        marginStart: 5,
+        color: 'white'
+    },
     card: {
         margin: 5,
-        backgroundColor: 'lightgrey',
-        borderRadius: 10
+        borderRadius: 10,
     },
+    TaskCompleted: {
+        flexDirection: 'row',
+        backgroundColor: 'lightgrey',
+        paddingTop: 5,
+        paddingLeft: 10,
+        paddingRight: 5,
+        flex: 1,
+        borderRadius: 10,
+    },
+    icon: {
+        padding: 5,
+        marginTop: 2,
+        marginLeft: 5
+    }
 });

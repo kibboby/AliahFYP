@@ -68,10 +68,29 @@ export default class callTask extends React.Component {
         <View style={styles.allview}>
           <View>
             <Text style={styles.Title}>Date: </Text>
-            <TextInput
-              style={{ height: 40, margin: 8, borderColor: 'black', borderWidth: 1 }}
-              placeholder="DD/MM/YYYY"
-              onChangeText={text => this.setState({ date: text })} />
+            <DatePicker
+              style={{ width: 300 }}
+              date={this.state.date}
+              mode="date"
+              placeholder="select date"
+              format="DD/MM/YYYY"
+              minDate="09/11/2020"
+              maxDate="09/11/2040"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              customStyles={{
+                dateIcon: {
+                  position: 'absolute',
+                  left: 0,
+                  top: 4,
+                  marginLeft: 0
+                },
+                dateInput: {
+                  marginLeft: 36
+                }
+              }}
+              onDateChange={(date) => { this.setState({ date: date }) }}
+            />
           </View>
           <View style={Timestyles.container}>
             <Text style={Timestyles.text}>Time: {this.state.time}</Text>
@@ -106,6 +125,11 @@ export default class callTask extends React.Component {
             <TouchableOpacity onPress={() => this._Insert_Data_Into_MySQL()} >
               <Text style={buttonStyles.text}>
                 Done
+            </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.props.navigation.goBack()} >
+              <Text style={buttonStyles.text}>
+                Cancel
             </Text>
             </TouchableOpacity>
           </View>

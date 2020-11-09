@@ -1,14 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { Card } from 'react-native-paper';
-import { StyleSheet, Text, View, SafeAreaView, ScrollView,FlatList,TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      sales_username:''
+      sales_username: ''
     }
   }
 
@@ -64,19 +64,20 @@ export default class App extends Component {
 
   render() {
     return (
-      <ScrollView style={styles.scrollView}>
+      <ScrollView>
         <View style={styles.container}>
-          <SafeAreaView style={styles.container}>
+          <Text style={styles.title}>TASK HISTORY</Text>
+          <SafeAreaView>
             <FlatList
               data={this.state.TaskList}
               renderItem={({ item }) => {
                 return (
                   <Card style={styles.card}>
-                    <View style={styles.Task2}>
+                    <View style={styles.Task}>
                       <TouchableOpacity style={{ flex: 1 }} onPress={() => {
                         this.redirectTaskDetailPage(item.task_title, item.task_id)
                       }}>
-                        <View style={styles.Task}>
+                        <View style={styles.TaskCompleted}>
                           <Text style={styles.Type}>{item.task_title}</Text>
                           <Text style={styles.Date}> | </Text>
                           <Text style={styles.Date}>{item.task_date}</Text>
@@ -99,95 +100,18 @@ export default class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 16,
+    paddingTop: 30,
     backgroundColor: '#fff',
-    //alignItems: 'center',
-    //justifyContent: 'center',
-    padding: "10%",
-  },
-
-  historyView: {
-    backgroundColor: "lightgrey",
-    marginTop: 10,
-    padding: 5,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-    borderBottomLeftRadius: 5,
-    borderBottomRightRadius: 5,
-    flexDirection: 'row',
-  },
-
-  historyContent: {
-    flexDirection: "row",
-
-    //fontWeight:"bold",
-
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    padding: '5%',
   },
 
   title: {
     fontWeight: "bold",
-    fontSize: 20,
+    fontSize: 18,
+    paddingTop: 20,
+    paddingLeft: 5,
+    marginBottom: 5
   },
-
-  row: {
-    flexDirection: "row",
-    marginTop: 10,
-    marginBottom: 10,
-  },
-
-  WonButton: {
-    backgroundColor: "green",
-    alignItems: "center",
-    padding: 5,
-    borderRadius: 5,
-  },
-
-  LoseButton: {
-    backgroundColor: "red",
-    marginLeft: 10,
-    alignItems: "center",
-    padding: 5,
-    borderRadius: 5,
-  },
-
-  buttoncontent: {
-    color: "white",
-    fontWeight: "bold",
-  },
-
-  details: {
-    width: "30%",
-    color: "grey"
-  },
-
-  info: {
-    fontWeight: "bold",
-    width: '50%',
-  },
-
-  border: {
-    marginTop: 10,
-    borderWidth: 1,
-    padding: '3%',
-  },
-
-  bordertext: {
-    fontWeight: "bold",
-  },
-  title2: {
-    fontWeight: "bold",
-    fontSize: 20,
-    marginTop: 40,
-  },
-
-  list: {
-    marginTop: 20,
-  },
-
   TaskTitle: {
     fontFamily: 'Roboto',
     fontSize: 16,
@@ -195,36 +119,8 @@ const styles = StyleSheet.create({
     marginStart: 15,
     fontWeight: 'bold'
   },
-  Task: {
-    flexDirection: 'row',
-    backgroundColor: 'palegreen',
-    paddingTop: 10,
-    paddingLeft: 10,
-    paddingRight: 5,
-    flex: 1,
-    borderRadius: 10,
-  },
-  TaskOverdue: {
-    flexDirection: 'row',
-    backgroundColor: 'red',
-    paddingTop: 10,
-    paddingLeft: 10,
-    paddingRight: 5,
-    flex: 1,
-    borderRadius: 10,
-  },
-  Task2: {
-    flexDirection: 'row',
-  },
   Date: {
     marginStart: 5,
-  },
-  TypeOverdue: {
-    color: 'white',
-  },
-  DateOverdue: {
-    marginStart: 5,
-    color: 'white'
   },
   card: {
     margin: 5,
@@ -232,16 +128,12 @@ const styles = StyleSheet.create({
   },
   TaskCompleted: {
     flexDirection: 'row',
-    backgroundColor: 'grey',
-    paddingTop: 5,
+    backgroundColor: 'lightgreen',
+    paddingTop: 10,
     paddingLeft: 10,
     paddingRight: 5,
+    paddingBottom: 10,
     flex: 1,
     borderRadius: 10,
-  },
-  icon: {
-    padding: 5,
-    marginTop: 2,
-    marginLeft: 5
   }
 });

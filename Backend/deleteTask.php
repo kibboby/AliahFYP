@@ -12,9 +12,10 @@ $resulti = mysqli_query($conn, $sqli);
 $json = "";
 
 if($resulti){
-    $json = "Successfully deleted the task";
+    $MSG = "Successfully delete task";
+    $json = json_encode($MSG);
 }else{
-    $json = "Unable to delete task";
+    $json = json_encode("Unable to delete task");
 }
 echo $json;
 

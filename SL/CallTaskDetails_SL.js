@@ -123,18 +123,18 @@ export default class SalesPersonAccount extends Component {
 
                                         <View style={styles.Direction2}>
                                             <TouchableOpacity style={styles.buttons} onPress={() => this._deleteTask(this.props.route.params.task_Id)}>
-                                                <Icon2 name="trash" size={20} color='#ffffff' />
-                                                <Text style={{ color: '#ffffff' }}>Delete Task</Text>
+                                                <Icon2 name="trash" size={20} color='#ff8c00' />
+                                                <Text style={{ color: '#ff8c00', textAlign: 'center', paddingTop: 2 }}>Delete Task</Text>
                                             </TouchableOpacity>
                                             <TouchableOpacity style={styles.buttons} onPress={() => this.props.navigation.navigate('Edit Call Task', {
                                                 task_id: item.task_id
                                             })}>
-                                                <Icon2 name="edit" size={20} color='#ffffff' />
-                                                <Text style={{ color: '#ffffff' }}>Edit Task</Text>
+                                                <Icon2 name="edit" size={20} color='#ff8c00' />
+                                                <Text style={{ color: '#ff8c00', textAlign: 'center', paddingTop: 2 }}>Edit Task</Text>
                                             </TouchableOpacity>
                                             <TouchableOpacity style={styles.buttons} onPress={this.dialCall}>
-                                                <Icon2 name="phone-call" size={20} color='#ffffff' />
-                                                <Text style={{ color: '#ffffff' }} >Call</Text>
+                                                <Icon2 name="phone-call" size={20} color='#ff8c00' />
+                                                <Text style={{ color: '#ff8c00', textAlign: 'center', paddingTop: 2 }} >Call</Text>
                                             </TouchableOpacity>
                                         </View>
                                     </View>
@@ -212,11 +212,11 @@ const styles = StyleSheet.create({
         padding: 20,
         borderRadius: 5,
         alignItems: 'center',
-        width: 115,
-        margin: 5
+        width: '30%',
+        margin: 5,
     },
     Direction2: {
-        justifyContent: "space-between",
+        justifyContent: "space-around",
         flexDirection: 'row',
         margin: '5%',
     },

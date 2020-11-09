@@ -4,7 +4,7 @@ import { StyleSheet, TouchableOpacity, Text, View, TextInput, Switch, StackScree
 import DatePicker from 'react-native-datepicker';
 import TimePicker from "react-native-24h-timepicker";
 import { ScrollView } from 'react-native-gesture-handler';
-
+import moment from 'moment';
 
 export default class appointmentTask extends React.Component {
   constructor(props) {
@@ -15,7 +15,12 @@ export default class appointmentTask extends React.Component {
       notes: "",
       leads_name: '',
       sales_username: '',
-      location: '',
+      // location: '',
+      // cm: moment().format("MM"),
+      // cy: moment().format("YYYY"),
+      // currentDay: moment().format('DD'),
+      // date: moment(cy.cm.currentDay).format('YYYY-MM-DD'),
+      // dateOne : moment([CurrentYear, CurrentMonth, currentDay])
     }
   }
 
@@ -63,13 +68,14 @@ export default class appointmentTask extends React.Component {
       }).catch((error) => {
         console.log(error);
       });
-      this.props.navigation.navigate('Lead Detail')
+    this.props.navigation.navigate('Lead Detail')
   }
 
   render() {
     return (
       <ScrollView>
-        <View>
+        <View style={styles.container}>
+    <Text>{this.state.date}{this.state.time}</Text>
           <View>
             <Text style={styles.Title}>Date:</Text>
             <DatePicker
@@ -77,9 +83,9 @@ export default class appointmentTask extends React.Component {
               date={this.state.date}
               mode="date"
               placeholder="select date"
-              format="YYYY-MM-DD"
-              minDate="2016-05-01"
-              maxDate="2016-06-01"
+              format="DD/MM/YYYY"
+              minDate="09/11/2020"
+              maxDate="09/11/2040"
               confirmBtnText="Confirm"
               cancelBtnText="Cancel"
               customStyles={{
@@ -92,7 +98,6 @@ export default class appointmentTask extends React.Component {
                 dateInput: {
                   marginLeft: 36
                 }
-                // ... You can check the source to find the other keys.
               }}
               onDateChange={(date) => { this.setState({ date: date }) }}
             />
@@ -137,9 +142,19 @@ export default class appointmentTask extends React.Component {
             <StatusBar style="auto" />
           </View>
           <View>
-            <TouchableOpacity onPress={() => this._Insert_Data_Into_MySQL()}>
+            <TouchableOpacity onPress={() => {
+              if(this.state.time != null && this.state.date != null){
+              this._Insert_Data_Into_MySQL()} 
+              else{
+                Alert.alert("Please enter the date and time!");
+              }}}>
               <Text style={buttonStyles.text}>
                 Done
+            </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.props.navigation.goBack()} >
+              <Text style={buttonStyles.text}>
+                Cancel
             </Text>
             </TouchableOpacity>
           </View>
@@ -153,17 +168,12 @@ export default class appointmentTask extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: "10%"
-
+    padding: "5%",
+    backgroundColor: '#fff',
   },
 
   Title: {
     fontSize: 16,
-    marginTop: 50,
-    margin: 8,
   },
 
   allDay: {
@@ -236,4 +246,5 @@ const Timestyles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600"
   },
+  
 });

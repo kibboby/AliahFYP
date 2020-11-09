@@ -1,8 +1,11 @@
 <?php
+
+$task_id = '';
 if (isset($_GET["task_id"])) {
     $task_id = $_GET["task_id"];
 }
 include "config.php";
+
 $json="";
 $sql = "select * from task where task_id='$task_id'";
 $result = mysqli_query($conn, $sql);
