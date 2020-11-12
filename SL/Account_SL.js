@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { Card } from 'react-native-paper';
 import Settings from 'react-native-vector-icons/AntDesign';
 import { ScrollView } from 'react-native-gesture-handler';
 import moment from 'moment';
-import Icon3 from 'react-native-vector-icons/MaterialIcons';
-import Icon2 from 'react-native-vector-icons/Feather';
+import Icon2 from 'react-native-vector-icons/MaterialIcons'
+import Icon3 from 'react-native-vector-icons/Feather'
 
 export default class SalesPersonAccount extends Component {
 
@@ -22,7 +22,13 @@ export default class SalesPersonAccount extends Component {
             CurrentYear: moment().format("YYYY"),
             CurrentMonth: moment().format("MM"),
             currentDay: moment().format("DD"),
+            lastRefresh: Date(Date.now()).toString(),
         }
+        this.refreshScreen = this.refreshScreen.bind(this)
+    }
+
+    refreshScreen() {
+        this.setState({ lastRefresh: Date(Date.now()).toString() })
     }
 
     componentDidMount() {
@@ -31,6 +37,7 @@ export default class SalesPersonAccount extends Component {
         this.FocusSubscription = this.props.navigation.addListener(
             'focus', () => {
                 this._AccountDetails();
+                this._TaskList();
             }
         )
     }
@@ -58,6 +65,88 @@ export default class SalesPersonAccount extends Component {
             })
             .catch((error) => {
                 console.error(error);
+            });
+    }
+
+    createDeleteAlert(task_id) {
+        Alert.alert(
+            "Confirmation",
+            "Are you sure you want to delete this task?" + task_id,
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: 'Delete', onPress: () => this._deleteTask(task_id) }
+            ],
+            { cancelable: false }
+        );
+    }
+
+    createCompletionAlert(task_id) {
+        Alert.alert(
+            "Confirmation",
+            "Confirmation for completion of task",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: 'Confirm', onPress: () => this._updateTask(task_id) }
+            ],
+            { cancelable: false }
+        );
+    }
+
+    _updateTask(task_id) {
+        const url = 'http://192.168.43.175:80/Backend/updateTaskStatus.php';
+        fetch(url,
+            {
+                method: 'POST',
+                headers:
+                {
+                    'Origin': '*',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(
+                    {
+                        id: task_id
+                    })
+
+            }).then((response) => response.json()).then((responseJsonFromServer) => {
+                alert(responseJsonFromServer);
+                this._TaskList();
+                this.refreshScreen();
+            }).catch((error) => {
+                console.log(error)
+            });
+    }
+
+    _deleteTask(task_id) {
+        const url = 'http://192.168.43.175:80/Backend/deleteTask.php';
+        fetch(url,
+            {
+                method: 'POST',
+                headers:
+                {
+                    'Origin': '*',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(
+                    {
+                        id: task_id
+                    })
+
+            }).then((response) => response.json()).then((responseJsonFromServer) => {
+                alert(responseJsonFromServer);
+                this._TaskList();
+                this.refreshScreen();
+            }).catch((error) => {
+                console.log(error)
             });
     }
 
@@ -114,53 +203,60 @@ export default class SalesPersonAccount extends Component {
                     />
 
                     <Text style={styles.TaskTitle}>UPCOMING TASKS</Text>
-                    <FlatList
-                        data={this.state.dataSource2}
-                        renderItem={({ item }) => {
-                            this.validateDate(item.task_date);
-                            if (this.state.diffDate > 0) {
-                                return (
-                                    <Card style={styles.card}>
-                                        <View style={styles.Task2}>
-                                            <TouchableOpacity style={{ flex: 1 }} onPress={() => {
-                                                this.redirectTaskDetailPage(item.task_title, item.task_id)
-                                            }}>
-                                                <View style={styles.Task}>
-                                                    <Text style={styles.Type}>{item.task_title}</Text>
-                                                    <Text style={styles.Date}> | </Text>
-                                                    <Text style={styles.Date}>{item.task_date}</Text>
-                                                </View>
-                                            </TouchableOpacity>
-                                            <Icon2 name="trash-2" size={20} color={'black'} style={styles.icon} onPress={() => this.createDeleteAlert(item.task_id)} />
-                                            <Icon3 name="done" size={20} color={'green'} style={styles.icon} onPress={() => { this.createCompletionAlert(item.task_id) }} />
-                                        </View>
-                                    </Card>
-                                )
-                            }
-                            else if (this.state.diffDate < 0) {
-                                return (
-                                    <Card style={styles.card}>
-                                        <View style={styles.Task2}>
-                                            <TouchableOpacity style={{ flex: 1 }} onPress={() => {
-                                                this.redirectTaskDetailPage(item.task_title, item.task_id)
-                                            }}>
-                                                <View style={styles.TaskOverdue}>
-                                                    <Text style={styles.TypeOverdue}>{item.task_title}</Text>
-                                                    <Text style={styles.DateOverdue}> | </Text>
-                                                    <Text style={styles.DateOverdue}>{item.task_date}</Text>
-                                                </View>
-                                            </TouchableOpacity>
-                                            {/* <Text style={styles.icon}>Overdue!</Text> */}
-                                            <Icon2 name="trash-2" size={20} color={'black'} style={styles.icon} onPress={() => this.createDeleteAlert(item.task_id)} />
-                                            <Icon3 name="done" size={20} color={'green'} style={styles.icon} onPress={() => { this.createCompletionAlert(item.task_id) }} />
-                                        </View>
-                                    </Card>
-                                )
-                            }
-                        }
-                        }
-                        keyExtractor={item => item.ID}
-                    />
+
+                    {this.state.dataSource2 == "No upcoming task!" ?
+                        <View>
+                            <Text style={{margin: 5, padding : 5}}>No Upcoming Task!</Text>
+                        </View> :
+                        <FlatList
+                            data={this.state.dataSource2}
+                            renderItem={({ item }) => {
+                                this.validateDate(item.task_date);
+                                if (this.state.diffDate > 0) {
+                                    return (
+                                        <Card style={styles.card}>
+                                            <View style={styles.Task2}>
+                                                <TouchableOpacity style={{ flex: 1 }} onPress={() => {
+                                                    this.redirectTaskDetailPage(item.task_title, item.task_id)
+                                                }}>
+                                                    <View style={styles.Task}>
+                                                        <Text style={styles.Type}>{item.task_title}</Text>
+                                                        <Text style={styles.Date}> | </Text>
+                                                        <Text style={styles.Date}>{item.task_date}</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                                <Icon3 name="trash-2" size={20} color={'black'} style={styles.icon} onPress={() => this.createDeleteAlert(item.task_id)} />
+                                                <Icon2 name="done" size={20} color={'green'} style={styles.icon} onPress={() => { this.createCompletionAlert(item.task_id) }} />
+                                            </View>
+                                        </Card>
+                                    )
+                                }
+                                else if (this.state.diffDate < 0) {
+                                    return (
+                                        <Card style={styles.card}>
+                                            <View style={styles.Task2}>
+                                                <TouchableOpacity style={{ flex: 1 }} onPress={() => {
+                                                    this.redirectTaskDetailPage(item.task_title, item.task_id)
+                                                }}>
+                                                    <View style={styles.TaskOverdue}>
+                                                        <Text style={styles.TypeOverdue}>{item.task_title}</Text>
+                                                        <Text style={styles.DateOverdue}> | </Text>
+                                                        <Text style={styles.DateOverdue}>{item.task_date}</Text>
+                                                    </View>
+                                                </TouchableOpacity>
+                                                {/* <Text style={styles.icon}>Overdue!</Text> */}
+                                                <Icon3 name="trash-2" size={20} color={'black'} style={styles.icon} onPress={() => this.createDeleteAlert(item.task_id)} />
+                                                <Icon2 name="done" size={20} color={'green'} style={styles.icon} onPress={() => { this.createCompletionAlert(item.task_id) }} />
+                                            </View>
+                                        </Card>
+                                    )
+                                }
+
+                            }}
+                        />
+                    }
+
+
                 </View>
             </ScrollView>
         )
@@ -216,21 +312,17 @@ const styles = StyleSheet.create({
     Task: {
         flexDirection: 'row',
         backgroundColor: 'palegreen',
-        paddingTop: 5,
-        paddingLeft: 10,
-        paddingRight: 5,
+        padding: 10,
         flex: 1,
-        borderRadius: 10,
+        borderRadius: 5
     },
     TaskOverdue: {
         flexDirection: 'row',
         backgroundColor: 'red',
-        paddingTop: 5,
-        paddingLeft: 10,
-        paddingBottom: 5,
-        paddingRight: 5,
+        padding: 10,
         flex: 1,
-        borderRadius: 10,
+        margin: 10,
+        borderRadius: 5
     },
     Task2: {
         flexDirection: 'row',
@@ -257,11 +349,10 @@ const styles = StyleSheet.create({
     TaskCompleted: {
         flexDirection: 'row',
         backgroundColor: 'lightgrey',
-        paddingTop: 5,
-        paddingLeft: 10,
-        paddingRight: 5,
+        padding: 10,
         flex: 1,
-        borderRadius: 10,
+        margin: 10,
+        borderRadius: 5
     },
     icon: {
         padding: 5,

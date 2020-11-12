@@ -105,7 +105,7 @@ export default class callTask extends React.Component {
                   />
                 </View>
                 <View style={Timestyles.container}>
-                  <Text style={Timestyles.text}>Time: </Text>
+                  <Text style={Timestyles.text}>Time:{this.state.time} </Text>
                   <TouchableOpacity
                     onPress={() => this.TimePicker.open()}
                     style={Timestyles.button}

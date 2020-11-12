@@ -15,7 +15,7 @@ if($resulti){
     $MSG = "Successfully updated task's status";
     $json = json_encode($MSG);
 }else{
-    $json = "Unable to update task";
+    $json = json_encode("Unable to update task");
 }
 echo $json;
 

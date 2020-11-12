@@ -13,7 +13,7 @@ if($result->num_rows>0){
     }
 }
 else{
-    $json = "No upcoming task!";
+    $json = json_encode("No upcoming task!");
 }
 
 echo $json;

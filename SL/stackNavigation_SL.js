@@ -23,6 +23,8 @@ import LostLeadReport from './LostLeadsReport_SL.js';
 import LeadsDetail from './LeadsDetailWithTask_SL.js';
 import Remarks from './Remarks_SL.js';
 import EditRemarks from './EditRemarks_SL.js';
+import setQuote from './setQuotationSent.js';
+import setQuoteAgreed from './setQuotationAgreed.js';
 
 //Create new tasks pages for Salesperson
 import CreateCallTask from './CreateCallTask_SL.js';
@@ -109,6 +111,8 @@ function HomeStackNav() {
       <HomeStack.Screen name="Dashboard" component={DashBoardSales} options={{headerShown: false}}/>
       <HomeStack.Screen name="Remarks" component={Remarks} />
       <HomeStack.Screen name="Edit Remarks" component={EditRemarks}/>
+      <HomeStack.Screen name="Set Quotation Sent" component={setQuote}/>
+      <HomeStack.Screen name="Set Quotation Agreed" component={setQuoteAgreed}/>
       <HomeStack.Screen name="Lead Detail" component={LeadsDetail} />
       <HomeStack.Screen name="Create Call Task" component={CreateCallTask} />
       <HomeStack.Screen name="Create Appointment Task" component={CreateAppointmentTask} />

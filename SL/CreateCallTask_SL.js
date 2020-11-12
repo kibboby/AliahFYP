@@ -34,6 +34,9 @@ export default class callTask extends React.Component {
   }
 
   _Insert_Data_Into_MySQL() {
+    if(this.state.date == "" || this.state.time == ""){
+      Alert.alert("Please fill in all the input!");
+    }else{
     const url = 'http://192.168.43.175:80/Backend/CreateCallTask.php';
     fetch(url,
       {
@@ -59,7 +62,7 @@ export default class callTask extends React.Component {
       }).catch((error) => {
         console.log(error);
       });
-
+    }
   }
 
   render() {

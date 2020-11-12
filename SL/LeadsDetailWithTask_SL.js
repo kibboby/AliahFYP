@@ -9,7 +9,6 @@ import ModalSelector from 'react-native-modal-selector'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icon2 from 'react-native-vector-icons/Feather';
 import moment from 'moment';
-import Constants from 'expo-constants';
 
 export default class App extends Component {
   constructor(props) {
@@ -20,15 +19,21 @@ export default class App extends Component {
       sales_username: '',
       lead_contact: '',
       task_id: '',
-      leads_status: '',
       isLoading: true,
       refreshing: false,
       diffDate: '',
       dataSource: '',
+      opacity: 1,
       CurrentYear: moment().format("YYYY"),
       CurrentMonth: moment().format("MM"),
       currentDay: moment().format("DD"),
+      lastRefresh: Date(Date.now()).toString(),
     }
+    this.refreshScreen = this.refreshScreen.bind(this)
+  }
+
+  refreshScreen() {
+    this.setState({ lastRefresh: Date(Date.now()).toString() })
   }
 
   componentDidMount() {
@@ -97,10 +102,12 @@ export default class App extends Component {
 
       }).then((response) => response.json()).then((responseJsonFromServer) => {
         alert(responseJsonFromServer);
+        this.LeadsDetailsItem();
+        this._retrieveLeadsTaskList();
+        this.refreshScreen();
       }).catch((error) => {
         console.log(error)
       });
-      this.forceUpdate();
   }
 
   _deleteTask(task_id) {
@@ -121,10 +128,12 @@ export default class App extends Component {
 
       }).then((response) => response.json()).then((responseJsonFromServer) => {
         alert(responseJsonFromServer);
+        this.LeadsDetailsItem();
+        this._retrieveLeadsTaskList();
+        this.refreshScreen();
       }).catch((error) => {
         console.log(error)
       });
-      this.forceUpdate();
   }
 
   _updateLeadStatus(leadsID, updatedStatus) {
@@ -146,10 +155,12 @@ export default class App extends Component {
 
       }).then((response) => response.json()).then((responseJsonFromServer) => {
         alert(responseJsonFromServer);
+        this.LeadsDetailsItem();
+        this._retrieveLeadsTaskList();
+        this.refreshScreen();
       }).catch((error) => {
         console.log(error)
       });
-      this.forceUpdate();
   }
 
   createStatusWonAlert(leads_id) {
@@ -251,20 +262,6 @@ export default class App extends Component {
     this.state.diffDate = result;
   }
 
-  _refreshControl(){
-    return(
-      <RefreshControl
-        refreshing={this.state.refreshing}
-        onRefresh={()=>this._refreshListView()} />
-    )
-  }
-
-  _refreshListView(){
-    this.setState({ refreshing: true})
-    this._retrieveLeadsTaskList()
-    this.setState({refreshing: false})
-  }
-
   render() {
     const encodedValue = {
       leads_name: this.state.leads_name,
@@ -291,11 +288,11 @@ export default class App extends Component {
         <FlatList
           data={this.state.dataSource}
           renderItem={({ item }) => {
-            this.state.leads_status = item.status;
-            if (item.status == "Open") {
-              return (
-                <View>
-                  <View style={styles.row}>
+            return (
+              <View>
+
+                {item.status == "Open"
+                  ? <View style={styles.row}>
                     <TouchableOpacity
                       style={styles.WonButton}
                       onPress={() => { this.createStatusWonAlert(item.lead_id) }}
@@ -309,142 +306,131 @@ export default class App extends Component {
                       <Text style={styles.buttoncontent}>LOSE</Text>
                     </TouchableOpacity>
                   </View>
-                </View>
-              )
-            }
 
-            else if (item.status == "Won") {
-              return (
-                <View>
-                  <View style={styles.row}>
-                    <TouchableOpacity
-                      style={styles.WonButton}
-                    >
-                      <Text style={styles.buttoncontent}>WON</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )
-            }
+                  : item.status == "Won"
+                    ? <View style={styles.row}>
+                      <TouchableOpacity
+                        style={styles.WonButton}
+                      >
+                        <Text style={styles.buttoncontent}>WON</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.LoseButton2}
+                        onPress={() => { this.createStatusLoseAlert(item.lead_id) }}
+                      >
+                        <Text style={styles.buttoncontent}>LOSE</Text>
+                      </TouchableOpacity>
+                    </View>
 
-            else if (item.status == "Lose") {
-              return (
-                <View>
-                  <View style={styles.row}>
-                    <TouchableOpacity
-                      style={styles.LoseButton}
-                    >
-                      <Text style={styles.buttoncontent}>LOSE</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )
-            }
-          }
-          }
+                    : <View style={styles.row}>
+                      <TouchableOpacity
+                        style={styles.WonButton2}
+                        onPress={() => { this.createStatusWonAlert(item.lead_id) }}
+                      >
+                        <Text style={styles.buttoncontent}>WON</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.LoseButton}
+                      >
+                        <Text style={styles.buttoncontent}>LOSE</Text>
+                      </TouchableOpacity>
+                    </View>
+                }
+              </View>
+            )
+          }}
         />
 
         <FlatList
           data={this.state.dataSource}
           renderItem={({ item }) => {
-            if (this.state.leads_status == "Open") {
-              return (
-                <View>
-                  <View style={styles.row}>
-                    <Text style={styles.details}>Name</Text>
-                    <Text style={styles.info} >{item.lead_name}</Text>
-                  </View>
-
-                  <View style={styles.row}>
-                    <Text style={styles.details}>Email</Text>
-                    <Text style={styles.info}>{item.lead_email}</Text>
-                  </View>
-
-                  <View style={styles.row}>
-                    <Text style={styles.details}>Contact</Text>
-                    <Text style={styles.info}>{item.lead_contact}</Text>
-                  </View>
-
-                  <View style={styles.row}>
-                    <Text style={styles.details}>Company</Text>
-                    <Text style={styles.info}>{item.lead_company}</Text>
-                  </View>
-
-                  <View style={styles.row}>
-                    <Text style={styles.details}>Interest</Text>
-                    <Text style={styles.info}>{item.interest}</Text>
-                  </View>
-
-                  <View style={styles.row}>
-                    <Text style={styles.details}>Comment</Text>
-                    <Text style={styles.info}>{item.comments}</Text>
-                  </View>
-
-                  <ModalSelector
-                    data={data}
-                    initValue="Create New Task"
-                    onChange={(option) => {
-                      if (option.label == "Call") {
-                        this.props.navigation.navigate('Create Call Task',
-                          {
-                            leads_name: this.state.leads_name,
-                            sales_username: this.state.sales_username
-                          })
-                      } else if (option.label == "Appointment") {
-                        this.props.navigation.navigate('Create Appointment Task',
-                          {
-                            leads_name: this.state.leads_name,
-                            sales_username: this.state.sales_username
-                          })
-                      }
-                      else {
-                        this.props.navigation.navigate('Create Other Task',
-                          {
-                            leads_name: this.state.leads_name,
-                            sales_username: this.state.sales_username
-                          })
-                      }
-                    }} />
-
+            return (
+              <View>
+                <View style={styles.row}>
+                  <Text style={styles.details}>Name</Text>
+                  <Text style={styles.info} >{item.lead_name}</Text>
                 </View>
-              )
-            }
 
-            else if (this.state.leads_status != "Open") {
-              return (
-                <View>
-                  <View style={styles.row}>
-                    <Text style={styles.details}>Name</Text>
-                    <Text style={styles.info} >{item.lead_name}</Text>
-                  </View>
-
-                  <View style={styles.row}>
-                    <Text style={styles.details}>Email</Text>
-                    <Text style={styles.info}>{item.lead_email}</Text>
-                  </View>
-
-                  <View style={styles.row}>
-                    <Text style={styles.details}>Contact</Text>
-                    <Text style={styles.info}>{item.lead_contact}</Text>
-                  </View>
-
-                  <View style={styles.row}>
-                    <Text style={styles.details}>Company</Text>
-                    <Text style={styles.info}>{item.lead_company}</Text>
-                  </View>
-
-                  <View style={styles.row}>
-                    <Text style={styles.details}>Interest</Text>
-                    <Text style={styles.info}>{item.interest}</Text>
-                  </View>
-
-                  <View style={styles.row}>
-                    <Text style={styles.details}>Comment</Text>
-                    <Text style={styles.info}>{item.comments}</Text>
-                  </View>
+                <View style={styles.row}>
+                  <Text style={styles.details}>Email</Text>
+                  <Text style={styles.info}>{item.lead_email}</Text>
                 </View>
-              )
-            }
+
+                <View style={styles.row}>
+                  <Text style={styles.details}>Contact</Text>
+                  <Text style={styles.info}>{item.lead_contact}</Text>
+                </View>
+
+                <View style={styles.row}>
+                  <Text style={styles.details}>Company</Text>
+                  <Text style={styles.info}>{item.lead_company}</Text>
+                </View>
+
+                <View style={styles.row}>
+                  <Text style={styles.details}>Interest</Text>
+                  <Text style={styles.info}>{item.interest}</Text>
+                </View>
+
+                <View style={styles.row}>
+                  <Text style={styles.details}>Comment</Text>
+                  <Text style={styles.info}>{item.comments}</Text>
+                </View>
+
+                {item.Contacted != "" ?
+                  <View style={styles.row}>
+                    <Text style={styles.details}>Contacted</Text>
+                    <Text style={styles.info}>{item.Contacted}</Text>
+                  </View>
+                  : <View></View>}
+
+                {item.Quote_Sent != "" ?
+                  <View style={styles.row}>
+                    <Text style={styles.details}>Quote Sent</Text>
+                    <Text style={styles.info}>{item.Quote_Sent}</Text>
+                  </View>
+                  : <View></View>}
+
+                {item.Quote_Agreed != "" ?
+                  <View style={styles.row}>
+                    <Text style={styles.details}>Quote Agreed</Text>
+                    <Text style={styles.info}>{item.Quote_Agreed}</Text>
+                  </View>
+                  : <View></View>}
+
+                {item.remarks != "" ?
+                  <View style={styles.row}>
+                    <Text style={styles.details}>Remarks</Text>
+                    <Text style={styles.info}>{item.remarks}</Text>
+                  </View>
+                  : <View></View>}
+
+                {item.status == "Open" ? <ModalSelector
+                  data={data}
+                  initValue="Create New Task"
+                  onChange={(option) => {
+                    if (option.label == "Call") {
+                      this.props.navigation.navigate('Create Call Task',
+                        {
+                          leads_name: this.state.leads_name,
+                          sales_username: this.state.sales_username
+                        })
+                    } else if (option.label == "Appointment") {
+                      this.props.navigation.navigate('Create Appointment Task',
+                        {
+                          leads_name: this.state.leads_name,
+                          sales_username: this.state.sales_username
+                        })
+                    }
+                    else {
+                      this.props.navigation.navigate('Create Other Task',
+                        {
+                          leads_name: this.state.leads_name,
+                          sales_username: this.state.sales_username
+                        })
+                    }
+                  }} /> : <View></View>}
+              </View>
+            )
           }} />
 
         <Text style={styles.title2}>TASKS</Text>
@@ -452,7 +438,6 @@ export default class App extends Component {
           <FlatList
             data={this.state.TaskList}
             extraData={this.state}
-            refreshControl={this._refreshControl()}
             renderItem={({ item }) => {
               if (item.task_status == "Upcoming") {
                 this.validateDate(item.task_date);
@@ -550,12 +535,29 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 
+  WonButton2: {
+    backgroundColor: "green",
+    alignItems: "center",
+    padding: 5,
+    borderRadius: 5,
+    opacity: 0.5
+  },
+
   LoseButton: {
     backgroundColor: "red",
     marginLeft: 10,
     alignItems: "center",
     padding: 5,
     borderRadius: 5,
+  },
+
+  LoseButton2: {
+    backgroundColor: "red",
+    marginLeft: 10,
+    alignItems: "center",
+    padding: 5,
+    borderRadius: 5,
+    opacity: 0.5
   },
 
   buttoncontent: {

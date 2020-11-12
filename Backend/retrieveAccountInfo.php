@@ -11,7 +11,7 @@ if($result->num_rows>0){
     }
 }
 else{
-    echo "No results found";
+    echo json_encode("No results found");
 }
 
 echo $json;

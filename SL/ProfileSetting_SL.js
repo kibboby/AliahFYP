@@ -30,17 +30,17 @@ export default class App extends Component {
     });
   }
 
-  _uploadImage() {
-    RNFetchBlob.fetch('POST', 'http://192.168.43.175:80/Backend/uploadImage.php', {
-      Authorization: "Bearer access-token",
-      otherHeader: "foo",
-      'Content-Type': 'multipart/form-data',
-    }, [
-      { name: 'image', filename: 'image.png', type: 'image/png', data: imageUpload }
-    ]).then((resp) => {
-    }).catch((err) => {
-    })
-  }
+  // _uploadImage() {
+  //   RNFetchBlob.fetch('POST', 'http://192.168.43.175:80/Backend/uploadImage.php', {
+  //     Authorization: "Bearer access-token",
+  //     otherHeader: "foo",
+  //     'Content-Type': 'multipart/form-data',
+  //   }, [
+  //     { name: 'image', filename: 'image.png', type: 'image/png', data: imageUpload }
+  //   ]).then((resp) => {
+  //   }).catch((err) => {
+  //   })
+  // }
 
   _Insert_Data_Into_MySQL() {
     const url = 'http://192.168.43.175:80/Backend/saveDetails_SL.php';

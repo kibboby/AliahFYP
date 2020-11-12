@@ -5,14 +5,20 @@ import { ActivityIndicator } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 // import Dialog from 'react-native-dialog';
 
-export default class ExampleTwo extends Component {
+export default class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isLoading: true,
       leads_name: '',
-      sales_username: 'Mr Pimple'
+      sales_username: 'Mr Pimple',
+      lastRefresh: Date(Date.now()).toString(),
     }
+    this.refreshScreen = this.refreshScreen.bind(this)
+  }
+
+  refreshScreen() {
+    this.setState({ lastRefresh: Date(Date.now()).toString() })
   }
 
   componentDidMount() {
@@ -48,30 +54,104 @@ export default class ExampleTwo extends Component {
       })
   }
 
-  navigateToRemarks(LD) {
-    this.props.navigation.navigate('Remarks',
-      {
-        leads_id: LD
-      })
+  navigateToRemarks(LD, status) {
+    if (status == "Lose") {
+      this.props.navigation.navigate('Remarks',
+        {
+          leads_id: LD
+        })
+    } else {
+      this.props.navigation.navigate('Set Quotation Agreed',
+        {
+          leads_id: LD
+        })
+    }
   }
 
-  // _addQuotationSent(leads_id){
-  //   <View>
-  //   <Dialog.Container  visible={true}>
-  //     <Dialog.Title>Set Quotation Sent Amount</Dialog.Title>
-  //     <Dialog.Description>
-  //       Please enter the price of quotation sent to the lead
-  //     </Dialog.Description>
-  //     <Dialog.Input
-  //     label="Quotation Price Sent to the lead" 
-  //     textInputRef="RM1000"/>
-  //     <Dialog.Button label="Cancel"
-  //     onPress={() => this.navigateToDetail(item.lead_name, this.sales_username)} />
-  //     <Dialog.Button label="Confirm"
-  //     onPress={() => this.navigateToDetail(item.lead_name, this.sales_username)} />
-  //   </Dialog.Container>
-  // </View>
-  // }
+
+  _setContactedStatus(LD, status, LS) {
+    if (LS == 'Open') {
+      if (status != "Yes") {
+        Alert.alert(
+          "Confirmation",
+          "Change lead's status to Contacted?" + LD + status,
+          [
+            {
+              text: "Cancel",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel"
+            },
+            { text: 'Confirm', onPress: () => this._updateLeadStatus(LD, "Yes") }
+          ],
+          { cancelable: false }
+        );
+      } else if (status == "Yes") {
+        Alert.alert(
+          "Confirmation",
+          "Change lead's status from 'Yes' to 'No'?" + LD + status,
+          [
+            {
+              text: "Cancel",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel"
+            },
+            { text: 'Confirm', onPress: () => this._updateLeadStatus(LD, "No") }
+          ],
+          { cancelable: false }
+        );
+      }
+    }else{ 
+      Alert.alert("Warning","You can't change a " + LS + " lead status")
+    }
+  }
+
+  _updateLeadStatus(leadsID, updatedStatus) {
+    const url = 'http://192.168.43.175:80/Backend/updateContactStatus.php';
+    fetch(url,
+      {
+        method: 'POST',
+        headers:
+        {
+          'Origin': '*',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(
+          {
+            id: leadsID,
+            status: updatedStatus
+          })
+
+      }).then((response) => response.json()).then((responseJsonFromServer) => {
+        alert(responseJsonFromServer);
+        this._populateDashboard();
+        this.refreshScreen();
+      }).catch((error) => {
+        console.log(error)
+      });
+
+  }
+
+  updateQuotation(leadsID, contactStatus, leadStatus) {
+    if (contactStatus != "Yes" && leadStatus == "Open") {
+      Alert.alert("Alert", "Contact this lead before deciding the amount of quotation sent")
+    }
+    else if (leadStatus != "Open") {
+      Alert.alert("Alert","You can't change a " + leadStatus + " lead's quotation");
+    } else {
+      this.props.navigation.navigate('Set Quotation Sent',
+        {
+          leads_id: leadsID
+        })
+    }
+  }
+
+  setLeadStatus() {
+    Alert.alert(
+      "Confirmation",
+      "Please set the lead's status in the lead's detail page before setting up the remarks!"
+    );
+  }
 
   render() {
     if (this.state.isLoading) {
@@ -83,7 +163,10 @@ export default class ExampleTwo extends Component {
     }
     return (
       <ScrollView style={styles.container}>
-        <Text style={styles.title}>DASHBOARD</Text>
+        <View style={styles.areaTitle}>
+          <Text style={styles.title}>DASHBOARD</Text>
+          <Icon name="refresh" size={25} color={'black'} style={{ marginTop: 20 }} onPress={() => this.refreshScreen()} />
+        </View>
         <View style={styles.header}>
           <Text style={styles.fontSetting1}>Leads</Text>
           <Text style={styles.fontSetting2}>Contacted</Text>
@@ -96,38 +179,40 @@ export default class ExampleTwo extends Component {
             <View style={styles.cardView}>
               <Text style={styles.firstCol}
                 onPress={() => this.navigateToDetail(item.lead_name, this.sales_username)}>{item.lead_name}   ({item.lead_company})</Text>
-              
+
               {item.Contacted == 'Yes' ?
-                <Icon onPress={() => this.navigateToDetail(item.lead_name, this.sales_username)}
-                  name="done" size={20} color={'green'} style={styles.SecColtrue} /> :
-                <Icon onPress={() => this.navigateToDetail(item.lead_name, this.sales_username)}
-                  name="close" size={20} color={'red'} style={styles.SecCol} />
+                <Icon onPress={() => this._setContactedStatus(item.lead_id, item.Contacted, item.status)}
+                  name="done" size={20} color={'green'} style={styles.SecColtrue} />
+                : item.Contacted == 'No' ?
+                  <Icon onPress={() => this._setContactedStatus(item.lead_id, item.Contacted, item.status)}
+                    name="close" size={20} color={'red'} style={styles.SecCol} />
+                  :
+                  <Text onPress={() => this._setContactedStatus(item.lead_id, item.Contacted, item.status)} style={styles.SecCol} />
               }
 
               {item.Quote_Sent == "" ?
-              <Text style={styles.SecColtrue}  onPress={() => this._addQuotationSent(item.lead_id)}></Text> 
-                : item.Quote_Sent == 'No' ? 
-                <Icon onPress={() => this.navigateToDetail(item.lead_name, this.sales_username)}
-                  name="close" size={20} color={'red'} style={styles.SecCol} /> 
+                <Text style={styles.SecColtrue} onPress={() => this.updateQuotation(item.lead_id, item.Contacted, item.status)}></Text>
+                : item.Quote_Sent == 'No' ?
+                  <Icon onPress={() => this.updateQuotation(item.lead_id, item.Contacted, item.status)}
+                    name="close" size={20} color={'red'} style={styles.SecCol} />
                   :
                   <Text style={styles.SecColtrue}
-                  onPress={() => this.navigateToDetail(item.lead_name, this.sales_username)}>{item.Quote_Sent}</Text>
+                    onPress={() => this.updateQuotation(item.lead_id, item.Contacted, item.status)}>{item.Quote_Sent}</Text>
               }
 
               {item.status == 'Won' ?
                 <Text style={styles.SecColtrue}
-                  onPress={() => this.navigateToRemarks(item.lead_id)}>
+                  onPress={() => this.navigateToRemarks(item.lead_id, item.status)}>
                   {item.status}</Text>
                 :
                 item.status == 'Lose' ?
                   <Text style={styles.SecCol}
-                    onPress={() => this.navigateToRemarks(item.lead_id)}>
+                    onPress={() => this.navigateToRemarks(item.lead_id, item.status)}>
                     {item.status}</Text>
                   :
                   <Text style={styles.SecColneutral}
-                    onPress={() => this.navigateToRemarks(item.lead_id)}></Text>
+                    onPress={() => this.setLeadStatus()}></Text>
               }
-
             </View>
           }
         />
@@ -143,12 +228,16 @@ const styles = StyleSheet.create({
     paddingTop: 30,
     backgroundColor: '#fff',
   },
+  areaTitle: {
+    flexDirection: 'row'
+  },
   title: {
     fontWeight: "bold",
     fontSize: 18,
     paddingTop: 20,
     paddingBottom: 10,
-    paddingLeft: 5
+    paddingLeft: 5,
+    flex: 1
   },
   cardView: {
     marginLeft: 5,

@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
     title: {
         textAlign: "center",
         fontSize: 16,
-        fontFamily: "Arial",
         color: 'grey',
         marginTop: 20
     },

@@ -120,7 +120,7 @@ export default class SalesPersonAccount extends Component {
                                             </View>
                                         </View>
 
-
+                                    
                                         <View style={styles.Direction2}>
                                             <TouchableOpacity style={styles.buttons} onPress={() => this._deleteTask(this.props.route.params.task_Id)}>
                                                 <Icon2 name="trash" size={20} color='#ff8c00' />

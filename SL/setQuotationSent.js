@@ -10,20 +10,18 @@ export default class EditRemarks extends Component {
     super(props);
     this.state = {
       lead_id: '',
-      remarks: '',
-      remarksDescription: '',
+      quote: '',
     }
   }
 
   componentDidMount() {
     this.setState({
-      lead_id: this.props.route.params.lead_id,
-      remarks: this.props.route.params.remarks
+      lead_id: this.props.route.params.leads_id,
     })
   }
 
   _Insert_Data_Into_MySQL() {
-    const url = 'http://192.168.43.175:80/Backend/saveRemarks.php';
+    const url = 'http://192.168.43.175:80/Backend/setQuote.php';
     fetch(url,
       {
         method: 'POST',
@@ -36,7 +34,7 @@ export default class EditRemarks extends Component {
         body: JSON.stringify(
           {
             LD: this.state.lead_id,
-            remarks: this.state.remarksDescription,
+            quote: this.state.quote,
           })
 
       }).then((response) => response.json()).then((responseJsonFromServer) => {
@@ -54,28 +52,27 @@ export default class EditRemarks extends Component {
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.RemarksC}>
-            <Text style={styles.Remarks}>Remarks</Text>
+            <Text style={styles.Remarks}>Quotation Sent</Text>
             <TextInput
               style={styles.inputR}
-              placeholder='Write down your justification here'
-              multiline={true}
+              placeholder='Write down the amount of quotation sent'
               autoFocus={true}
               editable={true}
-              onChangeText={text => this.setState({ remarksDescription: text })}
+              onChangeText={text => this.setState({ quote: text })}
             />
           </View>
-          <View>
-            <TouchableOpacity
-              style={styles.SubmitButtonR}
-              onPress={() => { this._Insert_Data_Into_MySQL() }}
-            >
-              <Text style={styles.SubmitR} >SUBMIT</Text>
-            </TouchableOpacity>
+          <View style={{flexDirection:"row", alignSelf: 'center'}}>
             <TouchableOpacity
               style={styles.SubmitButtonR}
               onPress={() => { this.props.navigation.goBack() }}
             >
               <Text style={styles.SubmitR} >Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.SubmitButtonR}
+              onPress={() => { this._Insert_Data_Into_MySQL() }}
+            >
+              <Text style={styles.SubmitR} >Confirm</Text>
             </TouchableOpacity>
           </View>
           <StatusBar style="auto" />
@@ -89,44 +86,34 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    //alignItems: 'Left',
     padding: "10%"
-    //justifyContent: 'center',
   },
 
   RemarksC: {
-    //margintop:50,
     backgroundColor: "white",
   },
 
   Remarks: {
-    //marginTop:"10%",
     color: "black",
     fontWeight: "bold",
-    //fontSize:14,
   },
 
   inputR: {
     marginTop: 10,
     padding: 10,
-    //borderWidth:2,
-    //borderColor:'gray'
     backgroundColor: 'lightgrey',
-    height: 200,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-    borderBottomLeftRadius: 5,
-    borderBottomRightRadius: 5,
+    height: 50,
+    borderRadius: 5,
   },
 
   SubmitButtonR: {
     marginTop: 20,
+    marginLeft: 10,
+    marginRight: 10,
     backgroundColor: "black",
     padding: 10,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-    borderBottomLeftRadius: 5,
-    borderBottomRightRadius: 5,
+    borderRadius: 5,
+    width: '35%'
   },
 
   SubmitR: {
