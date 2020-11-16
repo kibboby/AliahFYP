@@ -84,7 +84,7 @@ export default class appointmentTask extends React.Component {
               mode="date"
               placeholder="select date"
               format="DD/MM/YYYY"
-              minDate="09/11/2020"
+              minDate="14/11/2020"
               maxDate="09/11/2040"
               confirmBtnText="Confirm"
               cancelBtnText="Cancel"

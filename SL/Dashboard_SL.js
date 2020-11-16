@@ -11,7 +11,7 @@ export default class Dashboard extends Component {
     this.state = {
       isLoading: true,
       leads_name: '',
-      sales_username: 'Mr Pimple',
+      sales_username: 'John David',
       lastRefresh: Date(Date.now()).toString(),
     }
     this.refreshScreen = this.refreshScreen.bind(this)
@@ -68,34 +68,35 @@ export default class Dashboard extends Component {
     }
   }
 
-
   _setContactedStatus(LD, status, LS) {
     if (LS == 'Open') {
       if (status != "Yes") {
+        status = "Yes"
         Alert.alert(
           "Confirmation",
-          "Change lead's status to Contacted?" + LD + status,
+          "Change lead's status to Contacted?" + status,
           [
             {
               text: "Cancel",
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: 'Confirm', onPress: () => this._updateLeadStatus(LD, "Yes") }
+            { text: 'Confirm', onPress: () => this._updateLeadStatus(LD, status) }
           ],
           { cancelable: false }
         );
       } else if (status == "Yes") {
+        status = "No"
         Alert.alert(
           "Confirmation",
-          "Change lead's status from 'Yes' to 'No'?" + LD + status,
+          "Change lead's status from 'Yes' to 'No'?" + status,
           [
             {
               text: "Cancel",
               onPress: () => console.log("Cancel Pressed"),
               style: "cancel"
             },
-            { text: 'Confirm', onPress: () => this._updateLeadStatus(LD, "No") }
+            { text: 'Confirm', onPress: () => this._updateLeadStatus(LD, status) }
           ],
           { cancelable: false }
         );
@@ -129,7 +130,6 @@ export default class Dashboard extends Component {
       }).catch((error) => {
         console.log(error)
       });
-
   }
 
   updateQuotation(leadsID, contactStatus, leadStatus) {
@@ -182,7 +182,7 @@ export default class Dashboard extends Component {
 
               {item.Contacted == 'Yes' ?
                 <Icon onPress={() => this._setContactedStatus(item.lead_id, item.Contacted, item.status)}
-                  name="done" size={20} color={'green'} style={styles.SecColtrue} />
+                  name="done" size={20} color={'green'} style={styles.SecColtrue} /> 
                 : item.Contacted == 'No' ?
                   <Icon onPress={() => this._setContactedStatus(item.lead_id, item.Contacted, item.status)}
                     name="close" size={20} color={'red'} style={styles.SecCol} />

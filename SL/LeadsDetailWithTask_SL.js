@@ -592,6 +592,7 @@ const styles = StyleSheet.create({
 
   list: {
     marginTop: 10,
+    
   },
 
   TaskTitle: {

@@ -2,9 +2,6 @@ import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import ImagePicker from '../imagePicker.js';
-import RNFetchBlob from 'react-native-fetch-blob';
-
-// var RNFetchBlob = require('react-native-fetch-blob').default;
 
 export default class App extends Component {
   constructor(props) {
@@ -80,7 +77,9 @@ export default class App extends Component {
             <ImagePicker style={styles.imagepicker} />
           </View>
           <Text style={styles.instruction}>Username</Text>
-          <Text>{this.state.username}</Text>
+          <TouchableOpacity style={styles.input}>
+            <Text>{this.state.username}</Text>
+          </TouchableOpacity>
 
           <Text style={styles.instruction}>Designation</Text>
           <TextInput
@@ -137,7 +136,7 @@ export default class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#ff8c00',
     padding: "10%",
   },
 
@@ -145,10 +144,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
     marginTop: 10,
+    fontSize: 16
   },
 
   input: {
-    backgroundColor: "lightgrey",
+    backgroundColor: "white",
     padding: 10,
     borderRadius: 5,
     marginBottom: 20,

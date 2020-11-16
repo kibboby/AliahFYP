@@ -1,8 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { render } from 'react-dom';
 import { Card } from 'react-native-paper';
-import { StyleSheet, Text, View, SafeAreaView, ScrollView, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, ScrollView, 
+  FlatList, TouchableOpacity } from 'react-native';
 
 export default class App extends Component {
   constructor(props) {
@@ -64,7 +64,7 @@ export default class App extends Component {
 
   render() {
     return (
-      <ScrollView>
+      <ScrollView style={{backgroundColor:'white'}}>
         <View style={styles.container}>
           <Text style={styles.title}>TASK HISTORY</Text>
           <SafeAreaView>

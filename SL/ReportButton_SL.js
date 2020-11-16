@@ -61,5 +61,6 @@ const styles = StyleSheet.create({
     allview: {
         flex: 1,
         padding: "10%",
+        backgroundColor: 'white'
     },
 });

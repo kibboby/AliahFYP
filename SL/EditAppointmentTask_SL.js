@@ -78,7 +78,6 @@ export default class callTask extends React.Component {
   render() {
     return (
       <ScrollView>
-        <Text>{this.state.task_id}</Text>
         <FlatList
           data={this.state.dataSource}
           renderItem={({ item }) => {

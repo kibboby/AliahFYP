@@ -18,7 +18,7 @@ if ($resulti->num_rows > 0) {
         $leads_id = $row['lead_id'];
     }
 
-    $sql = "select * from task where lead_id='$leads_id' AND salesperson_username='Mr Pimple' order by task_status DESC";
+    $sql = "select * from task where lead_id='$leads_id' AND salesperson_username='John David' order by task_status DESC";
     $result = mysqli_query($conn, $sql);
 
     if (!$result) {

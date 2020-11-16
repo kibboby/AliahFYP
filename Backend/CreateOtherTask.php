@@ -11,7 +11,7 @@ $task_status = "Upcoming";
 $date = $obj["task_date"];
 $time = $obj["task_time"];
 $taskNotes = $obj["task_comments"];
-$salesperson = "Mr Pimple";
+$salesperson = "John David";
 // $salesperson = $obj["salesperson_username"];
 $lead = $obj["leads_name"];
 

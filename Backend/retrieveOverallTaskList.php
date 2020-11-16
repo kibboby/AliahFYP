@@ -2,7 +2,11 @@
 
 include "config.php";
 
-$sql = "select * from task where salesperson_username='Mr Pimple' AND task_status ='Upcoming'";
+$sql = "select * from task where salesperson_username='John David' AND task_status ='Upcoming'";
+// $sql = "Select * from task 
+// inner join salesperson on salesperson.username=task.salesperson_username 
+// where salesperson.admin_username='Aliah'
+// AND task.task_status='Completed'";
 $result = mysqli_query($conn, $sql);
 $json = "";
 

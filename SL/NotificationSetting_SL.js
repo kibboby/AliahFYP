@@ -52,13 +52,11 @@ export default class App extends React.Component {
             disabled={false}
             activeText={'On'}
             inActiveText={'Off'}
+            style={{paddingTop: 20}}
           />
         </View>
-
-        <Text style={styles.reminder}>Reminder Time</Text>
-
-
         <View style={Timestyles.container}>
+          <Text style={styles.reminder}>Reminder Time</Text>
           <Text style={Timestyles.text}> {this.state.time}</Text>
           <TouchableOpacity
             onPress={() => this.TimePicker.open()}
@@ -80,10 +78,16 @@ export default class App extends React.Component {
           <View style={styles.textV}>
             <Text style={styles.text}>Mute Newly Assigned Lead Notification</Text>
           </View>
-          {/* <Switch
-            value={switchValue}
-            onValueChange={toggleSwitch}
-          /> */}
+          <Switch
+            toggleSwitch1={this.toggleSwitch1}
+            switch1Value={this.state.switch1Value}
+            // onValueChange={props.toggleSwitch1}
+            // value={props.switch1Value}
+            disabled={false}
+            activeText={'On'}
+            inActiveText={'Off'}
+            style={{paddingTop: 20}}
+          />
         </View>
 
         <StatusBar style="auto" />
@@ -95,7 +99,7 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#ff8c00',
     padding: "10%",
     //alignItems: 'center',
     //justifyContent: 'center',
@@ -103,11 +107,14 @@ const styles = StyleSheet.create({
 
   textV: {
     width: "80%",
-    //backgroundColor:"red",
+    backgroundColor: "white",
+    borderRadius: 5,
+    padding: 15
   },
 
   text: {
     fontWeight: "bold",
+    fontSize: 16
   },
 
   row: {
@@ -116,9 +123,9 @@ const styles = StyleSheet.create({
   },
 
   reminder: {
-    marginTop: 20,
+    marginTop: 16,
     marginBottom: 10,
-    fontSize: 30,
+    fontSize: 16,
     fontWeight: "bold",
   },
 
@@ -133,24 +140,31 @@ const styles = StyleSheet.create({
 
 const Timestyles = StyleSheet.create({
   container: {
+    marginTop: 10,
     flexDirection: "row",
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 5
   },
 
   text: {
-    fontSize: 20,
+    fontSize: 16,
     //marginTop: 20,
     borderTopLeftRadius: 5,
     borderBottomLeftRadius: 5,
-    width: "50%",
+    width: "20%",
     padding: 10,
-    backgroundColor: "lightgrey",
-
+    backgroundColor: "white",
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
   },
   button: {
-    backgroundColor: "#D3D3D3",
+    alignSelf: 'flex-end',
+    backgroundColor: "white",
     borderTopRightRadius: 5,
     borderBottomRightRadius: 5,
     padding: 5,
+    marginLeft: 5
 
   },
 

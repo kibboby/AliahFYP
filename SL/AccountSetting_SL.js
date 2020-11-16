@@ -32,8 +32,6 @@ export default class Touchables extends Component {
         <View>
           <TouchableOpacity
             style={styles.AccButton}
-            //onPress={this._onPressLoginButton}
-            //disabled={!this.state.isFormValid}
             onPress={() => this.props.navigation.navigate('Profile Settings', {
               username: this.state.username,
               designation: this.state.designation,
@@ -48,8 +46,6 @@ export default class Touchables extends Component {
         <View>
           <TouchableOpacity
             style={styles.AccButton}
-            //onPress={this._onPressLoginButton}
-            //disabled={!this.state.isFormValid}
             onPress={() => this.props.navigation.navigate('Notification Settings')}
           >
             <Text style={styles.buttoncontent}>NOTIFICATION</Text>
@@ -58,8 +54,6 @@ export default class Touchables extends Component {
         <View>
           <TouchableOpacity
             style={styles.AccButton}
-            //onPress={this._onPressLoginButton}
-            //disabled={!this.state.isFormValid}
             onPress={() => this.props.navigation.navigate('ChangePassword')}
           >
             <Text style={styles.buttoncontent}>CHANGE PASSWORD</Text>
@@ -73,7 +67,7 @@ export default class Touchables extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#ff8c00',
     alignItems: 'center',
     justifyContent: 'center',
     padding: "10%",

@@ -3,7 +3,7 @@
 if (isset($_GET["sales_username"])) {
     $sales_username = $_GET["sales_username"];
 }
-$sales_username = 'Mr Pimple';
+$sales_username = 'John David';
 
 include "config.php";
 

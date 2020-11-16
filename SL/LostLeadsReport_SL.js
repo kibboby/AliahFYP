@@ -32,8 +32,8 @@ export default class ExampleTwo extends Component {
           data={this.state.dataSource}
           renderItem={({ item }) =>
             <View style={styles.cardView}>
-              <Text style={styles.firstCol} onPress={() => this.props.navigation.navigate('Lead Detail')}>{item.lead_name}   ({item.lead_company})</Text>
-              <Text style={styles.SecCol} onPress={() => this.props.navigation.navigate('Lead Detail')}>{item.remarks}</Text>
+              <Text style={styles.firstCol}>{item.lead_name}   ({item.lead_company})</Text>
+              <Text style={styles.SecCol}>{item.remarks}</Text>
             </View>
           }
         />

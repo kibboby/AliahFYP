@@ -51,7 +51,7 @@ export default class EditRemarks extends Component {
 
   render() {
     return (
-      <ScrollView>
+      <ScrollView style={{backgroundColor: 'white'}}>
         <View style={styles.container}>
           <View style={styles.RemarksC}>
             <Text style={styles.Remarks}>Remarks</Text>
@@ -64,12 +64,12 @@ export default class EditRemarks extends Component {
               onChangeText={text => this.setState({ remarksDescription: text })}
             />
           </View>
-          <View>
+          <View style={{flexDirection: 'row-reverse', alignContent: 'space-around'}}>
             <TouchableOpacity
               style={styles.SubmitButtonR}
               onPress={() => { this._Insert_Data_Into_MySQL() }}
             >
-              <Text style={styles.SubmitR} >SUBMIT</Text>
+              <Text style={styles.SubmitR} >Save</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.SubmitButtonR}
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     //marginTop:"10%",
     color: "black",
     fontWeight: "bold",
-    //fontSize:14,
+    fontSize:16,
   },
 
   inputR: {
@@ -113,25 +113,20 @@ const styles = StyleSheet.create({
     //borderColor:'gray'
     backgroundColor: 'lightgrey',
     height: 200,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-    borderBottomLeftRadius: 5,
-    borderBottomRightRadius: 5,
+    borderRadius: 5,
   },
 
   SubmitButtonR: {
-    marginTop: 20,
+    margin: 20,
     backgroundColor: "black",
     padding: 10,
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-    borderBottomLeftRadius: 5,
-    borderBottomRightRadius: 5,
+    borderRadius: 5,
+    width: 130
   },
 
   SubmitR: {
     color: "white",
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
     justifyContent: "center",
     textAlign: "center",

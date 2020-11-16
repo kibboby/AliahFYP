@@ -49,9 +49,9 @@ export default class ExampleTwo extends Component {
           data={this.state.dataSource}
           renderItem={({ item }) =>
             <View style={styles.cardView}>
-              <Text style={styles.firstCol} onPress={() => this.redirectPage(item.lead_name, item.salesperson_username)}>{item.lead_name}   ({item.lead_company})</Text>
-              <Text style={styles.SecThirdCol} onPress={() => this.redirectPage(item.lead_name, item.salesperson_username)}>{item.Quote_Sent}</Text>
-              <Text style={styles.SecThirdCol} onPress={() => this.redirectPage(item.lead_name, item.salesperson_username)}>{item.Quote_Agreed}</Text>
+              <Text style={styles.firstCol}>{item.lead_name}   ({item.lead_company})</Text>
+              <Text style={styles.SecThirdCol} >{item.Quote_Sent}</Text>
+              <Text style={styles.SecThirdCol}>{item.Quote_Agreed}</Text>
             </View>
           }
         />

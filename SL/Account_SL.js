@@ -162,8 +162,8 @@ export default class SalesPersonAccount extends Component {
 
     render() {
         return (
-            <ScrollView>
-                <View style={{ flex: 1, padding: "10%" }}>
+            <ScrollView styel={{ backgroundColor: 'white' }}>
+                <View style={{ flex: 1, padding: "5%", alignSelf: 'center'}}>
                     <FlatList
                         data={this.state.dataSource}
                         renderItem={({ item }) =>
@@ -255,8 +255,6 @@ export default class SalesPersonAccount extends Component {
                             }}
                         />
                     }
-
-
                 </View>
             </ScrollView>
         )
@@ -321,7 +319,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'red',
         padding: 10,
         flex: 1,
-        margin: 10,
         borderRadius: 5
     },
     Task2: {

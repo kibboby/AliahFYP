@@ -1,7 +1,7 @@
 <?php
 include "config.php";
 
-$sql = "select * from salesperson where username='Mr Pimple'";
+$sql = "select * from salesperson where username='John David'";
 $result = mysqli_query($conn, $sql);
 
 if($result->num_rows>0){

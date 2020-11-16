@@ -50,13 +50,7 @@ export default class Touchables extends Component {
                 <View>
                   <View style={styles.RemarksC}>
                     <Text style={styles.Remarks}>Remarks</Text>
-                    <TextInput
-                      style={styles.inputR}
-                      placeholder='Write down your justification here'
-                      multiline={true}
-                      autoFocus={true}
-                      value={item.remarks}
-                    />
+                    <Text style={styles.inputR}>{this.state.remarksDescription}</Text>
                   </View>
 
                   <View>
@@ -70,7 +64,7 @@ export default class Touchables extends Component {
                           })
                       }
                       }>
-                      <Text style={styles.SubmitR} >Edit Remarks</Text>
+                      <Text style={styles.SubmitR} >Edit</Text>
                     </TouchableOpacity>
                   </View>
                   <StatusBar style="auto" />
@@ -82,18 +76,11 @@ export default class Touchables extends Component {
       );
     } else {
       return (
-        <ScrollView>
+        <ScrollView style={{backgroundColor: '#ff8c00'}}>
           <View style={styles.container}>
             <View style={styles.RemarksC}>
               <Text style={styles.Remarks}>Remarks</Text>
-              <TextInput
-                style={styles.inputR}
-                placeholder='Write down your justification here'
-                multiline={true}
-                autoFocus={true}
-                editable={false}
-                value={this.state.remarksDescription}
-              />
+              <Text style={styles.inputR}>No remarks yet!</Text>
             </View>
 
             <View>
@@ -107,7 +94,7 @@ export default class Touchables extends Component {
                     })
                 }
                 }>
-                <Text style={styles.SubmitR} >Edit Remarks</Text>
+                <Text style={styles.SubmitR}>Edit</Text>
               </TouchableOpacity>
             </View>
             <StatusBar style="auto" />
@@ -136,16 +123,15 @@ const styles = StyleSheet.create({
     //marginTop:"10%",
     color: "black",
     fontWeight: "bold",
-    //fontSize:14,
+    fontSize:16,
   },
 
   inputR: {
     marginTop: 10,
     padding: 10,
     //borderWidth:2,
-    //borderColor:'gray'
+    borderColor:'gray',
     backgroundColor: 'lightgrey',
-    height: 200,
     borderRadius: 5,
   },
 
@@ -153,12 +139,14 @@ const styles = StyleSheet.create({
     marginTop: 20,
     backgroundColor: "black",
     padding: 10,
-    borderRadius: 5
+    borderRadius: 5,
+    width: 130,
+    alignSelf: 'flex-end'
   },
 
   SubmitR: {
     color: "white",
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
     justifyContent: "center",
     textAlign: "center",
