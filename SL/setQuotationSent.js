@@ -21,7 +21,7 @@ export default class EditRemarks extends Component {
   }
 
   _Insert_Data_Into_MySQL() {
-    const url = 'http://192.168.43.175:80/Backend/setQuote.php';
+    const url = 'https://poggersfyp.mooo.com/Backend/setQuote.php';
     fetch(url,
       {
         method: 'POST',

@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 //import React from 'react';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, BackHandler } from 'react-native';
 
 //export default function App() {
 export default class Touchables extends Component {
@@ -24,6 +24,22 @@ export default class Touchables extends Component {
       sales_email: this.props.route.params.sales_email,
       sales_contact: this.props.route.params.sales_contact
     });
+  }
+
+  exit(){
+    Alert.alert(
+      "Exit App",
+      "Do you want to exit?",
+      [
+        {
+          text: "No",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "Yes", onPress: () => BackHandler.exitApp() }
+      ],
+      { cancelable: false }
+      );
   }
 
   render() {
@@ -57,6 +73,14 @@ export default class Touchables extends Component {
             onPress={() => this.props.navigation.navigate('ChangePassword')}
           >
             <Text style={styles.buttoncontent}>CHANGE PASSWORD</Text>
+          </TouchableOpacity>
+        </View>
+        <View>
+          <TouchableOpacity
+            style={styles.AccButton}
+            onPress={() => this.exit()}
+          >
+            <Text style={styles.buttoncontent}>LOGOUT</Text>
           </TouchableOpacity>
         </View>
       </View>

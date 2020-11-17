@@ -42,7 +42,7 @@ export default class SalesPersonAccount extends Component {
     }
 
     _TaskDetails() {
-        return fetch(`http://192.168.43.175:80/Backend/retrieveTaskDetails.php?task_id=${encodeURIComponent(this.props.route.params.task_Id)}`)
+        return fetch(`https://poggersfyp.mooo.com/Backend/retrieveTaskDetails.php?task_id=${encodeURIComponent(this.props.route.params.task_Id)}`)
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({
@@ -55,7 +55,7 @@ export default class SalesPersonAccount extends Component {
     };
 
     _deleteTask(task_id) {
-        const url = 'http://192.168.43.175:80/Backend/deleteTask.php';
+        const url = 'https://poggersfyp.mooo.com/Backend/deleteTask.php';
         fetch(url,
             {
                 method: 'POST',
@@ -122,10 +122,10 @@ export default class SalesPersonAccount extends Component {
 
                                     
                                         <View style={styles.Direction2}>
-                                            <TouchableOpacity style={styles.buttons} onPress={() => this._deleteTask(this.props.route.params.task_Id)}>
+                                            {/* <TouchableOpacity style={styles.buttons} onPress={() => this._deleteTask(this.props.route.params.task_Id)}>
                                                 <Icon2 name="trash" size={20} color='#ff8c00' />
                                                 <Text style={{ color: '#ff8c00', textAlign: 'center', paddingTop: 2 }}>Delete Task</Text>
-                                            </TouchableOpacity>
+                                            </TouchableOpacity> */}
                                             <TouchableOpacity style={styles.buttons} onPress={() => this.props.navigation.navigate('Edit Call Task', {
                                                 task_id: item.task_id
                                             })}>
@@ -216,6 +216,7 @@ const styles = StyleSheet.create({
         margin: 5,
     },
     Direction2: {
+        alignSelf: 'center',
         justifyContent: "space-around",
         flexDirection: 'row',
         margin: '5%',

@@ -25,7 +25,7 @@ export default class App extends Component {
     const encodedValue = {
       encodedSalesName: this.props.sales_username
     }
-    return fetch(`http://192.168.43.175:80/Backend/retrieveCompletedTask.php?sales_username=${encodeURIComponent(this.state.sales_username)}`)
+    return fetch(`https://poggersfyp.mooo.com/Backend/retrieveCompletedTask.php?sales_username=${encodeURIComponent(this.state.sales_username)}`)
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({

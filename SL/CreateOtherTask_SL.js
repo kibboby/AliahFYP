@@ -36,7 +36,7 @@ export default class otherTask extends React.Component {
   }
 
   _Insert_Data_Into_MySQL() {
-    const url = 'http://192.168.43.175:80/Backend/CreateOtherTask.php';
+    const url = 'https://poggersfyp.mooo.com/Backend/CreateOtherTask.php';
     fetch(url,
       {
         method: 'POST',

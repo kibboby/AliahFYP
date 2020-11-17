@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, ScrollView, Alert } from 'react-native';
-import { FlatList, TouchableNativeFeedback } from 'react-native-gesture-handler';
+import { StyleSheet, Text, View, ScrollView, Alert, TouchableOpacity } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import { ActivityIndicator } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-// import Dialog from 'react-native-dialog';
+import AlertIcon from 'react-native-vector-icons/AntDesign';
 
 export default class Dashboard extends Component {
   constructor(props) {
@@ -34,7 +34,7 @@ export default class Dashboard extends Component {
   }
 
   _populateDashboard() {
-    return fetch('http://192.168.43.175:80/Backend/PopulateSalesDashboard.php')
+    return fetch('https://poggersfyp.mooo.com/Backend/PopulateSalesDashboard.php')
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
@@ -68,46 +68,52 @@ export default class Dashboard extends Component {
     }
   }
 
-  _setContactedStatus(LD, status, LS) {
+  _setContactedStatus(LD, status, LS, QS) {
     if (LS == 'Open') {
-      if (status != "Yes") {
-        status = "Yes"
-        Alert.alert(
-          "Confirmation",
-          "Change lead's status to Contacted?" + status,
-          [
-            {
-              text: "Cancel",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel"
-            },
-            { text: 'Confirm', onPress: () => this._updateLeadStatus(LD, status) }
-          ],
-          { cancelable: false }
-        );
-      } else if (status == "Yes") {
-        status = "No"
-        Alert.alert(
-          "Confirmation",
-          "Change lead's status from 'Yes' to 'No'?" + status,
-          [
-            {
-              text: "Cancel",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel"
-            },
-            { text: 'Confirm', onPress: () => this._updateLeadStatus(LD, status) }
-          ],
-          { cancelable: false }
-        );
+      if (QS == "") {
+        if (status != "Yes") {
+          status = "Yes"
+          Alert.alert(
+            "Confirmation",
+            "Change lead's status to Contacted?",
+            [
+              {
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+              },
+              { text: 'Confirm', onPress: () => this._updateLeadStatus(LD, status) }
+            ],
+            { cancelable: false }
+          );
+        } else {
+          status = "No"
+          Alert.alert(
+            "Confirmation",
+            "Change lead's status from 'Yes' to 'No'?",
+            [
+              {
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+              },
+              { text: 'Confirm', onPress: () => this._updateLeadStatus(LD, status) }
+            ],
+            { cancelable: false }
+          );
+        }
       }
-    }else{ 
-      Alert.alert("Warning","You can't change a " + LS + " lead status")
+      else {
+        Alert.alert("Warning", "You can't change the contacted status if you have sent a quotation to the lead!");
+      }
+    }
+    else {
+      Alert.alert("Warning", "You can't change a " + LS + " lead status")
     }
   }
 
   _updateLeadStatus(leadsID, updatedStatus) {
-    const url = 'http://192.168.43.175:80/Backend/updateContactStatus.php';
+    const url = 'https://poggersfyp.mooo.com/Backend/updateContactStatus.php';
     fetch(url,
       {
         method: 'POST',
@@ -137,7 +143,7 @@ export default class Dashboard extends Component {
       Alert.alert("Alert", "Contact this lead before deciding the amount of quotation sent")
     }
     else if (leadStatus != "Open") {
-      Alert.alert("Alert","You can't change a " + leadStatus + " lead's quotation");
+      Alert.alert("Alert", "You can't change a " + leadStatus + " lead's quotation");
     } else {
       this.props.navigation.navigate('Set Quotation Sent',
         {
@@ -181,13 +187,14 @@ export default class Dashboard extends Component {
                 onPress={() => this.navigateToDetail(item.lead_name, this.sales_username)}>{item.lead_name}   ({item.lead_company})</Text>
 
               {item.Contacted == 'Yes' ?
-                <Icon onPress={() => this._setContactedStatus(item.lead_id, item.Contacted, item.status)}
-                  name="done" size={20} color={'green'} style={styles.SecColtrue} /> 
+                <Icon onPress={() => this._setContactedStatus(item.lead_id, item.Contacted, item.status, item.Quote_Sent)}
+                  name="done" size={20} color={'green'} style={styles.SecColtrue} />
                 : item.Contacted == 'No' ?
-                  <Icon onPress={() => this._setContactedStatus(item.lead_id, item.Contacted, item.status)}
+                  <Icon onPress={() => this._setContactedStatus(item.lead_id, item.Contacted, item.status, item.Quote_Sent)}
                     name="close" size={20} color={'red'} style={styles.SecCol} />
                   :
-                  <Text onPress={() => this._setContactedStatus(item.lead_id, item.Contacted, item.status)} style={styles.SecCol} />
+                  <TouchableOpacity style={styles.SecCol} onPress={() => 
+                    this._setContactedStatus(item.lead_id, item.Contacted, item.status, item.Quote_Sent)}/>    
               }
 
               {item.Quote_Sent == "" ?
@@ -200,18 +207,28 @@ export default class Dashboard extends Component {
                     onPress={() => this.updateQuotation(item.lead_id, item.Contacted, item.status)}>{item.Quote_Sent}</Text>
               }
 
-              {item.status == 'Won' ?
+              {item.status == 'Won' && item.Quote_Agreed != "" ?
                 <Text style={styles.SecColtrue}
                   onPress={() => this.navigateToRemarks(item.lead_id, item.status)}>
-                  {item.status}</Text>
+                  {item.status} ({item.Quote_Agreed})</Text>
                 :
-                item.status == 'Lose' ?
-                  <Text style={styles.SecCol}
+                item.status == 'Won' && item.Quote_Agreed == "" ?
+                  <Text style={styles.SecColtrue}
                     onPress={() => this.navigateToRemarks(item.lead_id, item.status)}>
-                    {item.status}</Text>
+                    {item.status} <AlertIcon name="exclamationcircleo" size={15} color="red" style={styles.icon} /></Text>
                   :
-                  <Text style={styles.SecColneutral}
-                    onPress={() => this.setLeadStatus()}></Text>
+                  item.status == 'Lose' && item.remarks == "" ?
+                    <Text style={styles.SecCol}
+                      onPress={() => this.navigateToRemarks(item.lead_id, item.status)}>
+                      {item.status} <AlertIcon name="exclamationcircleo" size={15} color="red" style={styles.icon} /></Text>
+                    :
+                    item.status == 'Lose' && item.remarks != "" ?
+                      <Text style={styles.SecCol}
+                        onPress={() => this.navigateToRemarks(item.lead_id, item.status)}>
+                        {item.status}</Text>
+                      :
+                      <Text style={styles.SecColneutral}
+                        onPress={() => this.setLeadStatus()}></Text>
               }
             </View>
           }

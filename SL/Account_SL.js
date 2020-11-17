@@ -38,12 +38,13 @@ export default class SalesPersonAccount extends Component {
             'focus', () => {
                 this._AccountDetails();
                 this._TaskList();
+                this.refreshScreen();
             }
         )
     }
 
     _AccountDetails() {
-        return fetch('http://192.168.43.175:80/Backend/retrieveAccountInfo.php')
+        return fetch('https://poggersfyp.mooo.com/Backend/retrieveAccountInfo.php')
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({
@@ -56,7 +57,7 @@ export default class SalesPersonAccount extends Component {
     }
 
     _TaskList() {
-        return fetch('http://192.168.43.175:80/Backend/retrieveOverallTaskList.php')
+        return fetch('https://poggersfyp.mooo.com/Backend/retrieveOverallTaskList.php')
             .then((response) => response.json())
             .then((responseJson) => {
                 this.setState({
@@ -71,7 +72,7 @@ export default class SalesPersonAccount extends Component {
     createDeleteAlert(task_id) {
         Alert.alert(
             "Confirmation",
-            "Are you sure you want to delete this task?" + task_id,
+            "Are you sure you want to delete this task?",
             [
                 {
                     text: "Cancel",
@@ -101,7 +102,7 @@ export default class SalesPersonAccount extends Component {
     }
 
     _updateTask(task_id) {
-        const url = 'http://192.168.43.175:80/Backend/updateTaskStatus.php';
+        const url = 'https://poggersfyp.mooo.com/Backend/updateTaskStatus.php';
         fetch(url,
             {
                 method: 'POST',
@@ -118,15 +119,15 @@ export default class SalesPersonAccount extends Component {
 
             }).then((response) => response.json()).then((responseJsonFromServer) => {
                 alert(responseJsonFromServer);
-                this._TaskList();
                 this.refreshScreen();
+                this._TaskList();
             }).catch((error) => {
                 console.log(error)
             });
     }
 
     _deleteTask(task_id) {
-        const url = 'http://192.168.43.175:80/Backend/deleteTask.php';
+        const url = 'https://poggersfyp.mooo.com/Backend/deleteTask.php';
         fetch(url,
             {
                 method: 'POST',
@@ -143,12 +144,34 @@ export default class SalesPersonAccount extends Component {
 
             }).then((response) => response.json()).then((responseJsonFromServer) => {
                 alert(responseJsonFromServer);
-                this._TaskList();
                 this.refreshScreen();
+                this._TaskList();
             }).catch((error) => {
                 console.log(error)
             });
     }
+
+    redirectTaskDetailPage(taskType, taskId) {
+        if (taskType == "Call") {
+          this.props.navigation.navigate('Call Task Detail',
+            {
+              sales_username: this.state.username,
+              task_Id: taskId
+            })
+        } else if (taskType == "Appointment") {
+          this.props.navigation.navigate('Appointment Task Detail',
+            {
+              sales_username: this.state.username,
+              task_Id: taskId
+            })
+        } else {
+          this.props.navigation.navigate('Other Task Detail',
+            {
+              sales_username: this.state.username,
+              task_Id: taskId
+            })
+        }
+      }
 
     validateDate(taskDate) {
         var day = taskDate.substr(0, 2);
@@ -162,8 +185,9 @@ export default class SalesPersonAccount extends Component {
 
     render() {
         return (
-            <ScrollView styel={{ backgroundColor: 'white' }}>
-                <View style={{ flex: 1, padding: "5%", alignSelf: 'center'}}>
+            <ScrollView styel={{ backgroundColor: 'white', margin: 5}}>
+                <View style={{ flex: 1, padding: "5%", marginTop: 15}}>
+                    
                     <FlatList
                         data={this.state.dataSource}
                         renderItem={({ item }) =>

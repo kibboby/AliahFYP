@@ -37,7 +37,7 @@ export default class callTask extends React.Component {
     if(this.state.date == "" || this.state.time == ""){
       Alert.alert("Please fill in all the input!");
     }else{
-    const url = 'http://192.168.43.175:80/Backend/CreateCallTask.php';
+    const url = 'https://poggersfyp.mooo.com/Backend/CreateCallTask.php';
     fetch(url,
       {
         method: 'POST',

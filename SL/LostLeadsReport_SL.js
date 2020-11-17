@@ -10,7 +10,7 @@ export default class ExampleTwo extends Component {
   }
 
   componentDidMount() {
-    return fetch('http://192.168.43.175:80/Backend/LostLeads.php')
+    return fetch('https://poggersfyp.mooo.com/Backend/LostLeads.php')
     .then((response) => response.json())
     .then((responseJson) => {
       this.setState({

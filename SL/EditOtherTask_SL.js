@@ -30,7 +30,7 @@ export default class callTask extends React.Component {
   }
 
   _TaskDetails() {
-    return fetch(`http://192.168.43.175:80/Backend/retrieveTaskDetails.php?task_id=${encodeURIComponent(this.props.route.params.task_id)}`)
+    return fetch(`https://poggersfyp.mooo.com/Backend/retrieveTaskDetails.php?task_id=${encodeURIComponent(this.props.route.params.task_id)}`)
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
@@ -43,7 +43,7 @@ export default class callTask extends React.Component {
   };
 
   _Insert_Data_Into_MySQL() {
-    const url = 'http://192.168.43.175:80/Backend/editOtherTaskDetails.php';
+    const url = 'https://poggersfyp.mooo.com/Backend/editOtherTaskDetails.php';
     fetch(url,
       {
         method: 'POST',

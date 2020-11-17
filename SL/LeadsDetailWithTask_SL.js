@@ -47,6 +47,7 @@ export default class App extends Component {
       'focus', () => {
         this.LeadsDetailsItem();
         this._retrieveLeadsTaskList();
+        this.refreshScreen();
       }
     )
   }
@@ -55,7 +56,7 @@ export default class App extends Component {
     const encodedValue = {
       encodedName: this.props.route.params.leads_name,
     }
-    return fetch(`http://192.168.43.175:80/Backend/leadsDetails.php?lead_name=${encodeURIComponent(encodedValue.encodedName)}`)
+    return fetch(`https://poggersfyp.mooo.com/Backend/leadsDetails.php?lead_name=${encodeURIComponent(encodedValue.encodedName)}`)
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
@@ -72,7 +73,7 @@ export default class App extends Component {
       encodedName: this.props.route.params.leads_name,
       encodedSalesName: this.props.route.params.sales_username
     }
-    return fetch(`http://192.168.43.175:80/Backend/retrieveLeadsTaskList.php?lead_name=${encodeURIComponent(encodedValue.encodedName)}&sales_username=${encodeURIComponent(encodedValue.encodedSalesName)}`)
+    return fetch(`https://poggersfyp.mooo.com/Backend/retrieveLeadsTaskList.php?lead_name=${encodeURIComponent(encodedValue.encodedName)}&sales_username=${encodeURIComponent(encodedValue.encodedSalesName)}`)
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
@@ -85,7 +86,7 @@ export default class App extends Component {
   }
 
   _updateTask(task_id) {
-    const url = 'http://192.168.43.175:80/Backend/updateTaskStatus.php';
+    const url = 'https://poggersfyp.mooo.com/Backend/updateTaskStatus.php';
     fetch(url,
       {
         method: 'POST',
@@ -111,7 +112,7 @@ export default class App extends Component {
   }
 
   _deleteTask(task_id) {
-    const url = 'http://192.168.43.175:80/Backend/deleteTask.php';
+    const url = 'https://poggersfyp.mooo.com/Backend/deleteTask.php';
     fetch(url,
       {
         method: 'POST',
@@ -137,7 +138,7 @@ export default class App extends Component {
   }
 
   _updateLeadStatus(leadsID, updatedStatus) {
-    const url = 'http://192.168.43.175:80/Backend/updateLeadStatus.php';
+    const url = 'https://poggersfyp.mooo.com/Backend/updateLeadStatus.php';
     fetch(url,
       {
         method: 'POST',
@@ -190,6 +191,22 @@ export default class App extends Component {
           style: "cancel"
         },
         { text: 'Confirm', onPress: () => this._updateLeadStatus(leads_id, "Lose") }
+      ],
+      { cancelable: false }
+    );
+  }
+
+  createStatusResetAlert(leads_id) {
+    Alert.alert(
+      "Confirmation",
+      "Reset lead's status to OPEN",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: 'Confirm', onPress: () => this._updateLeadStatus(leads_id, "Open") }
       ],
       { cancelable: false }
     );
@@ -308,31 +325,45 @@ export default class App extends Component {
                   </View>
 
                   : item.status == "Won"
-                    ? <View style={styles.row}>
-                      <TouchableOpacity
-                        style={styles.WonButton}
-                      >
-                        <Text style={styles.buttoncontent}>WON</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.LoseButton2}
-                        onPress={() => { this.createStatusLoseAlert(item.lead_id) }}
-                      >
-                        <Text style={styles.buttoncontent}>LOSE</Text>
+                    ? <View style={{ flexDirection: 'row'}}>
+                      <View style={styles.row}>
+                        <TouchableOpacity
+                          style={styles.WonButton}
+                        >
+                          <Text style={styles.buttoncontent}>WON</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={styles.LoseButton2}
+                          onPress={() => { this.createStatusLoseAlert(item.lead_id) }}
+                        >
+                          <Text style={styles.buttoncontent}>LOSE</Text>
+                        </TouchableOpacity>
+                      </View>
+                      <TouchableOpacity style={{marginTop: 5}} onPress={() => { this.createStatusResetAlert(item.lead_id) }}>
+                        <Text style={{  backgroundColor: 'lightgrey', color: 'black', padding: 8, borderRadius: 5 }}>
+                          Reset Status
+                      </Text>
                       </TouchableOpacity>
                     </View>
 
-                    : <View style={styles.row}>
-                      <TouchableOpacity
-                        style={styles.WonButton2}
-                        onPress={() => { this.createStatusWonAlert(item.lead_id) }}
-                      >
-                        <Text style={styles.buttoncontent}>WON</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={styles.LoseButton}
-                      >
-                        <Text style={styles.buttoncontent}>LOSE</Text>
+                    : <View style={{ flexDirection: 'row'}}>
+                      <View style={styles.row}>
+                        <TouchableOpacity
+                          style={styles.WonButton2}
+                          onPress={() => { this.createStatusWonAlert(item.lead_id) }}
+                        >
+                          <Text style={styles.buttoncontent}>WON</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={styles.LoseButton}
+                        >
+                          <Text style={styles.buttoncontent}>LOSE</Text>
+                        </TouchableOpacity>
+                      </View>
+                      <TouchableOpacity style={{marginTop: 5}} onPress={() => { this.createStatusResetAlert(item.lead_id) }}>
+                        <Text style={{  backgroundColor: 'lightgrey', color: 'black', padding: 8, borderRadius: 5 }}>
+                          Reset Status
+                      </Text>
                       </TouchableOpacity>
                     </View>
                 }
@@ -526,6 +557,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 10,
     marginBottom: 10,
+    flex: 1
   },
 
   WonButton: {
@@ -592,7 +624,7 @@ const styles = StyleSheet.create({
 
   list: {
     marginTop: 10,
-    
+
   },
 
   TaskTitle: {
